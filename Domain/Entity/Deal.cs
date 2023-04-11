@@ -12,7 +12,7 @@ namespace Domain.Entity
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public DateOnly DatePublication{ get; set; }
+        public DateTime DatePublication { get; set; }
         public int MinPrice { get; set; }
         public int MaxPrice { get; set; }
         public int CategoryId { get; set; }
