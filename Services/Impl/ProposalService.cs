@@ -24,22 +24,31 @@ namespace Services.Impl
         {
             try
             {
-                var proposal = new Proposal()
+                var proposal = _propposalRepository.GetAll().Where(x => x.DealId == model.DealId && x.UserId == model.UserId).FirstOrDefault();
+                if (proposal == null)
                 {
-                    Descripton= model.Descripton,
-                    Price= model.Price,
-                    UserId= model.UserId,
-                    DealId = model.DealId,
-                    DatePublish = DateTime.UtcNow,
-                };
-
-                await _propposalRepository.Create(proposal);
-
+                    proposal = new Proposal()
+                    {
+                        Descripton = model.Descripton,
+                        Price = model.Price,
+                        UserId = model.UserId,
+                        DealId = model.DealId,
+                        DatePublish = DateTime.UtcNow,
+                    };
+                    await _propposalRepository.Create(proposal);
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                
                 return new BaseResponse<bool>()
                 {
-                    Data = true,
-                    Description = "Ok",
-                    StatusCode = Domain.Enum.StatusCode.Ok,
+                    Data = false,
+                    Description = "Вы уже отправили заявку",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
                 };
             }
             catch (Exception ex)

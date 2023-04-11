@@ -249,6 +249,7 @@ namespace Service.Impl
                     user.CategoryId = model.CategoryId ?? user.CategoryId;
                     user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
                     user.Description = model.Description ?? user.Description;
+
                     _userRepository.Update(user);
 
                     return new BaseResponse<bool>()

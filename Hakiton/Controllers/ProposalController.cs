@@ -39,13 +39,17 @@ namespace Hakiton.Controllers
                 if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
                 {
                     var response = await _proposalService.Create(model);
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
                         return Ok();
                     }
-                    StatusCode(500, response.Description);
+                    if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                    {
+                        return StatusCode(400, response.Description);
+                    }
+                    return StatusCode(500, response.Description);
                 }
-                StatusCode(403);
+                return StatusCode(403);
             }
             return BadRequest("Ошибка");
         }
