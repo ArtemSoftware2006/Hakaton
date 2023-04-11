@@ -183,11 +183,32 @@ namespace Service.Impl
         {
             try
             {
-                var executors = _userRepository.GetAll().Where(x => x.CategoryId == id).ToList();
+                var executors = _userRepository.GetAll().Where(x => x.CategoryId == id && x.Role == Role.Executor).ToList();
 
                 return new BaseResponse<List<User>>()
                 {
                     Data = executors,
+                    Description = "Ok",
+                    StatusCode = StatusCode.Ok,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<User>>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = $"[Login(User)] : {ex.Message})",
+                };
+            }
+        }
+        public async Task<BaseResponse<List<User>>> GetAllUsers()
+        {
+            try
+            {
+                var users = _userRepository.GetAll().ToList();
+                return new BaseResponse<List<User>>()
+                {
+                    Data = users,
                     Description = "Ok",
                     StatusCode = StatusCode.Ok,
                 };
@@ -213,5 +234,6 @@ namespace Service.Impl
             return new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
+
     }
 }

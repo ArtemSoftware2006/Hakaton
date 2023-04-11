@@ -85,13 +85,32 @@ namespace Hakaton.Controllers
             return BadRequest("Модель не валидна");
         }
         [HttpGet]
-        public async Task<IActionResult> GetExecutorByCategory(int categoryId)
+        public async Task<IActionResult> GetAllUsers()
         {
             if (ModelState.IsValid)
             {
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    var response = await _userService.GetExecutorByCategory(categoryId);
+                    var response = await _userService.GetAllUsers();
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Json(response.Data);
+                    }
+                    return StatusCode(500, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetExecutorByCategory(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var response = await _userService.GetExecutorByCategory(id);
 
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
