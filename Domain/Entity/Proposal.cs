@@ -8,7 +8,7 @@
         public DateTime DatePublish { get; set; }
         public int DealId { get; set; }
         public Deal Deal { get; set; }
-        public int ExecutorId { get; set; }
-        public Executor Executor { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

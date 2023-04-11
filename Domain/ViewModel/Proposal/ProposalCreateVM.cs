@@ -11,7 +11,7 @@ namespace Domain.ViewModel.Proposal
     {
         public string Descripton { get; set; }
         public int Price { get; set; }
-        public int ExecutorId { get; set; }
+        public int UserId { get; set; }
         public int DealId { get; set; }
     }
 }

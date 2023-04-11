@@ -20,7 +20,7 @@ namespace Services.Impl
             _dealRepository = dealRepository;
             _userRepository = userRepository;
         }
-        public async Task<BaseResponse<bool>> Create(string login, DealCreateVM model)
+        public async Task<BaseResponse<bool>> Create( DealCreateVM model)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Services.Impl
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
-                    EmployerId = 1,
+                    UserId = model.UserId,
                 };
 
                 await _dealRepository.Create(deal);

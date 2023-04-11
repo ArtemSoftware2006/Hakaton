@@ -20,8 +20,8 @@ namespace Domain.Entity
         public string? location { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
-        public int EmployerId { get; set; }
-        public Employer Employer { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
         public ICollection<Proposal> Proposals { get; set; }
     }
 }

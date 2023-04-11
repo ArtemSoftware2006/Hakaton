@@ -34,7 +34,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _dealService.Create(User.Identity.Name, model);
+                var response = await _dealService.Create(model);
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
                     return Ok();

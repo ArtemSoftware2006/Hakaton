@@ -28,7 +28,8 @@ namespace Services.Impl
                 {
                     Descripton= model.Descripton,
                     Price= model.Price,
-                    ExecutorId= model.ExecutorId,
+                    UserId= model.UserId,
+                    DealId = model.DealId,
                     DatePublish = DateTime.UtcNow,
                 };
 
