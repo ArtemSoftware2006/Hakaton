@@ -20,7 +20,7 @@ namespace Hakiton.Controllers
             _proposalService = proposalService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetPoroposal()
+        public async Task<IActionResult> GetAllPoroposals()
         {
             var response = await _proposalService.GetAll();
 

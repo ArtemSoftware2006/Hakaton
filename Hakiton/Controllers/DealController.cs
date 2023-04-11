@@ -3,6 +3,7 @@ using Domain.ViewModel.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Service.Interfaces;
 using Services.Interfaces;
 
@@ -18,7 +19,6 @@ namespace Hakiton.Controllers
             _dealService = dealService;
         }
         [HttpGet]
-        [Authorize]
         public async Task<string> Test()
         {
             return "HelloWorld";
@@ -60,6 +60,20 @@ namespace Hakiton.Controllers
                 return Json(response.Data);
             }
             return BadRequest(response.Description);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Get(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _dealService.Get(id);
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                {
+                    return Json(response.Data);
+                }
+                return BadRequest(response.Description);
+            }
+            return BadRequest("Ошибка");
         }
     }
 }

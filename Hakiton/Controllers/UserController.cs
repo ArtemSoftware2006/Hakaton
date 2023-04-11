@@ -58,6 +58,7 @@ namespace Hakaton.Controllers
             }
             return false;
         }
+        [Authorize("Executor")]
         [HttpPost]
         public async Task<IActionResult> SetCategory([FromBody]UserSetCategoryVM model)
         {

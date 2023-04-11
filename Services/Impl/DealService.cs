@@ -60,9 +60,35 @@ namespace Services.Impl
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponse<Deal>> Get(int id)
+        public async Task<BaseResponse<Deal>> Get(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var deal = await _dealRepository.Get(id);
+                if (deal != null)
+                {
+                    return new BaseResponse<Deal>()
+                    {
+                        Data = deal,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<Deal>()
+                {
+                    Data = deal,
+                    Description = $"Нет заказа с id = {id}",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Deal>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
 
         public async Task<BaseResponse<List<Deal>>> GetAll()
