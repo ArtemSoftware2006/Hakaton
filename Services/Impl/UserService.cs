@@ -179,6 +179,28 @@ namespace Service.Impl
                 };
             }
         }
+        public async Task<BaseResponse<List<User>>> GetExecutorByCategory(int id)
+        {
+            try
+            {
+                var executors = _userRepository.GetAll().Where(x => x.CategoryId == id).ToList();
+
+                return new BaseResponse<List<User>>()
+                {
+                    Data = executors,
+                    Description = "Ok",
+                    StatusCode = StatusCode.Ok,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<User>>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = $"[Login(User)] : {ex.Message})",
+                };
+            }
+        }
 
         private ClaimsIdentity Authenticate(User user)
         {

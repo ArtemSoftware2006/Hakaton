@@ -12,7 +12,7 @@ namespace Hakaton.Controllers
 
     [Route("[controller]/[action]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : Controller
     {
         public IUserService _userService { get; set; }
         public UserController(IUserService userService)
@@ -54,11 +54,15 @@ namespace Hakaton.Controllers
             return BadRequest("Модель не валидна");
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Ok();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return Ok();
+            }
+            return StatusCode(403);
+
         }
         //[Authorize("Executor")]
         [HttpPost]
@@ -73,6 +77,25 @@ namespace Hakaton.Controllers
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
                         return Ok();
+                    }
+                    return StatusCode(500, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetExecutorByCategory(int categoryId)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var response = await _userService.GetExecutorByCategory(categoryId);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Json(response.Data);
                     }
                     return StatusCode(500, response.Description);
                 }
