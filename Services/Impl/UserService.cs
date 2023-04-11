@@ -3,7 +3,7 @@ using Domain.Entity;
 using Domain.Enum;
 using Domain.Helper;
 using Domain.Response;
-using Domain.ViewModel;
+using Domain.ViewModel.User;
 using Service.Interfaces;
 using System;
 using System.Collections.Generic;

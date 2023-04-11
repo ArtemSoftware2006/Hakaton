@@ -1,6 +1,6 @@
 ﻿using Domain.Entity;
 using Domain.Response;
-using Domain.ViewModel;
+using Domain.ViewModel.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

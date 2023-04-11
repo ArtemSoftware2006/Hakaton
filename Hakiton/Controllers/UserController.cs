@@ -1,11 +1,11 @@
-﻿using Domain.ViewModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Domain.ViewModel.User;
 
 namespace Hakaton.Controllers
 {

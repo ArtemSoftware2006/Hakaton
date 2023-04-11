@@ -20,11 +20,23 @@ namespace DAL.Repository
         {
             await _dbContext.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
+
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Login == entity.Login);
-            await _dbContext.AddAsync(new Employer()
+            if (user.Role == Domain.Enum.Role.Employer)
             {
-              UserId = user.Id
-            }); 
+                await _dbContext.AddAsync(new Employer()
+                {
+                    UserId = user.Id
+                });
+            }
+            else
+            {
+                await _dbContext.AddAsync(new Executor()
+                {
+                    UserId = user.Id
+                });
+            }
+
             await _dbContext.SaveChangesAsync();
 
             return true;
