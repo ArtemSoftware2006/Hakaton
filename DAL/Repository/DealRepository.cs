@@ -9,22 +9,23 @@ using System.Threading.Tasks;
 
 namespace DAL.Repository
 {
-    public class EmployerRepository : IEmployerRepository
+    public class DealRepository : IDealRepository
     {
-        public EmployerRepository(AppDbContext dbContext)
+        public AppDbContext _dbContext { get; set; }
+
+        public DealRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public AppDbContext _dbContext { get; set; }
-        public async Task<bool> Create(Employer entity)
+        public async Task<bool> Create(Deal entity)
         {
-            await _dbContext.AddAsync(entity);
+            await _dbContext.AddAsync(entity); 
             await _dbContext.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> Delete(Employer entity)
+        public async Task<bool> Delete(Deal entity)
         {
             _dbContext.Remove(entity);
             await _dbContext.SaveChangesAsync();
@@ -32,18 +33,17 @@ namespace DAL.Repository
             return true;
         }
 
-        public async Task<Employer> Get(int id)
+        public async Task<Deal> Get(int id)
         {
-            //Возможно не будет Deals
-            return await _dbContext.Employers.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
+            return _dbContext.Deals.FirstOrDefault(x => x.Id == id);
         }
 
-        public IQueryable<Employer> GetAll()
+        public IQueryable<Deal> GetAll()
         {
-            return _dbContext.Employers;
+            return _dbContext.Deals;
         }
 
-        public async Task<Employer> Update(Employer entity)
+        public async Task<Deal> Update(Deal entity)
         {
             _dbContext.Update(entity);
             await _dbContext.SaveChangesAsync();

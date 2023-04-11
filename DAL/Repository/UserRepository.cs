@@ -44,7 +44,7 @@ namespace DAL.Repository
 
         public async Task<bool> Delete(User entity)
         {
-            await _dbContext.AddAsync(entity);
+            _dbContext.Remove(entity);
             await _dbContext.SaveChangesAsync();
 
             return true;
