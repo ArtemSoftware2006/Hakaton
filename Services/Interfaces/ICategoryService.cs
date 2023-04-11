@@ -12,11 +12,9 @@ namespace Services.Interfaces
 {
     public interface ICategoryService
     {
-        Task<BaseResponse<Deal>> Get(int id);
-        Task<BaseResponse<Deal>> GetByName(string name);
+        Task<BaseResponse<Category>> Get(int id);
+        Task<BaseResponse<Category>> GetByName(string name);
         Task<BaseResponse<bool>> Delete(int id);
-        Task<BaseResponse<bool>> Create(string login, DealCreateVM model);
-        Task<BaseResponse<List<Deal>>> GetAll();
-        Task<BaseResponse<List<Deal>>> GetByCetegory(int id);
+        Task<BaseResponse<List<Category>>> GetAll();
     }
 }

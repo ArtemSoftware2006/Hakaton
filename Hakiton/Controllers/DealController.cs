@@ -18,6 +18,13 @@ namespace Hakiton.Controllers
             _dealService = dealService;
         }
         [HttpGet]
+        [Authorize]
+        public async Task<string> Test()
+        {
+            return "HelloWorld";
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetDeals()
         {
             var response = await _dealService.GetAll();
