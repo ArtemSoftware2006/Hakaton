@@ -14,11 +14,13 @@ namespace Services.Impl
     public class DealService : IDealService
     {
         public IDealRepository _dealRepository { get; set; }
-        public DealService(IDealRepository dealRepository)
+        public IUserRepository _userRepository { get; set; }
+        public DealService(IDealRepository dealRepository, IUserRepository userRepository)
         {
             _dealRepository = dealRepository;
+            _userRepository = userRepository;
         }
-        public async Task<BaseResponse<bool>> Create(DealCreateVM model)
+        public async Task<BaseResponse<bool>> Create(string login, DealCreateVM model)
         {
             try
             {
@@ -30,6 +32,7 @@ namespace Services.Impl
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
+                    EmployerId = _userRepository.GetAll().FirstOrDefault(x => x.Login == login).Id,
                 };
 
                 await _dealRepository.Create(deal);
@@ -62,9 +65,35 @@ namespace Services.Impl
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponse<List<Deal>>> GetAll()
+        public async Task<BaseResponse<List<Deal>>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var deals = _dealRepository.GetAll().ToList();
+                if (deals.Count != 0)
+                {
+                    return new BaseResponse<List<Deal>>()
+                    {
+                        Data = deals,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<List<Deal>>()
+                {
+                    Data = deals,
+                    Description = "Нет заказов",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Deal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
 
         public Task<BaseResponse<Deal>> GetByTitle(string Title)
