@@ -6,6 +6,7 @@
         public string Descripton { get; set; }
         public int Price { get; set; }
         public int ExecutorId { get; set; }
+        public DateTime DatePublish { get; set; }
         public Executor Executor { get; set; }
     }
 }
