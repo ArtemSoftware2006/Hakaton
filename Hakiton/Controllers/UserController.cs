@@ -64,6 +64,25 @@ namespace Hakaton.Controllers
             return StatusCode(403);
 
         }
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody] UserUpdateVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = await _userService.Update(model);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Ok();
+                    }
+                    return StatusCode(500, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
         //[Authorize("Executor")]
         [HttpPost]
         public async Task<IActionResult> SetCategory([FromBody]UserSetCategoryVM model)

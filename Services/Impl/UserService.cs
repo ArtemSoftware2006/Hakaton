@@ -235,5 +235,45 @@ namespace Service.Impl
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
 
+        public async Task<BaseResponse<bool>> Update(UserUpdateVM model)
+        {
+            try
+            {
+                var user = await _userRepository.Get(model.Id);
+                if (user != null)
+                {
+
+                    user.FirstName = model.FirstName ?? user.FirstName;
+                    user.LastName = model.LastName ?? user.LastName;
+                    user.SecondName = model.SecondName ?? user.SecondName;
+                    user.CategoryId = model.CategoryId ?? user.CategoryId;
+                    user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
+                    user.Description = model.Description ?? user.Description;
+                    _userRepository.Update(user);
+
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        Description = "Ok",
+                        StatusCode = StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    Description = $"нет пользователя с id = {model.Id}",
+                    StatusCode = StatusCode.NotFound,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = $"[Login(User)] : {ex.Message})",
+                };
+            }
+        }
     }
 }
