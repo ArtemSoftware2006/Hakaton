@@ -20,7 +20,7 @@ namespace Hakaton.Controllers
             _userService = userService;
         }
         [HttpPost]
-        public async Task<bool> Registr([FromBody]UserRegistrVM model)
+        public async Task<IActionResult> Registr([FromBody]UserRegistrVM model)
         {
             if (ModelState.IsValid)
             {
@@ -30,17 +30,14 @@ namespace Hakaton.Controllers
                 {
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Data));
 
-                    return true;
+                    return Ok();
                 }
-                else
-                {
-                    return false;
-                }
+                return NotFound();
             }
-            return false;
+            return BadRequest("Модель не валидна");
         }
         [HttpPost]
-        public async Task<bool> Login([FromBody] UserLoginVM model)
+        public async Task<IActionResult> Login([FromBody] UserLoginVM model)
         {
             if (ModelState.IsValid)
             {
@@ -50,14 +47,11 @@ namespace Hakaton.Controllers
                 {
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Data));
 
-                    return true;
+                    return Ok();
                 }
-                else
-                {
-                    return false;
-                }
+                return NotFound(); 
             }
-            return false;
+            return BadRequest("Модель не валидна");
         }
         [HttpPost]
         [Authorize]
@@ -66,24 +60,25 @@ namespace Hakaton.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
-        [Authorize("Executor")]
+        //[Authorize("Executor")]
         [HttpPost]
         public async Task<IActionResult> SetCategory([FromBody]UserSetCategoryVM model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _userService.SetCategory(model);
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = await _userService.SetCategory(model);
 
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                {
-                    return Ok();
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Ok();
+                    }
+                    return StatusCode(500, response.Description);
                 }
-                else
-                {
-                    return BadRequest(response.Description);
-                }
+                return StatusCode(403);
             }
-            return BadRequest("Ошибка");
+            return BadRequest("Модель не валидна");
         }
     }
 }

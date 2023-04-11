@@ -19,9 +19,13 @@ namespace Hakiton.Controllers
             _dealService = dealService;
         }
         [HttpGet]
-        public async Task<string> Test()
+        public async Task<IActionResult> Test()
         {
-            return "HelloWorld";
+            if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+            {
+                return Json("HelloWorld");
+            }
+            return StatusCode(403,"fdasdas");
         }
 
         [HttpGet]
@@ -35,18 +39,22 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
-        [Authorize("Employer")]
+        //[Authorize("Employer")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DealCreateVM model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _dealService.Create(model);
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
                 {
-                    return Ok();
+                    var response = await _dealService.Create(model);
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                    {
+                        return Ok();
+                    }
+                    return StatusCode(500, response.Description);
                 }
-                return BadRequest(response.Description);
+                return StatusCode(403);
             }
             return BadRequest("Ошибка");
         }

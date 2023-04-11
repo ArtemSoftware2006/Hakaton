@@ -30,18 +30,22 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
-        [Authorize("Executor")]
+        //[Authorize("Executor")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProposalCreateVM model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _proposalService.Create(model);
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
                 {
-                    return Ok();
+                    var response = await _proposalService.Create(model);
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                    {
+                        return Ok();
+                    }
+                    StatusCode(500, response.Description);
                 }
-                return BadRequest(response.Description);
+                StatusCode(403);
             }
             return BadRequest("Ошибка");
         }
