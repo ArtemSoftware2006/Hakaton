@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class adasd : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -162,11 +162,19 @@ namespace DAL.Migrations
                     Descripton = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Price = table.Column<int>(type: "int", nullable: false),
+                    DatePublish = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DealId = table.Column<int>(type: "int", nullable: false),
                     ExecutorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Proposals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Proposals_Deals_DealId",
+                        column: x => x.DealId,
+                        principalTable: "Deals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Proposals_Executors_ExecutorId",
                         column: x => x.ExecutorId,
@@ -175,43 +183,6 @@ namespace DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "DealHasProposals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ProposalId = table.Column<int>(type: "int", nullable: false),
-                    DealId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DealHasProposals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DealHasProposals_Deals_DealId",
-                        column: x => x.DealId,
-                        principalTable: "Deals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DealHasProposals_Proposals_ProposalId",
-                        column: x => x.ProposalId,
-                        principalTable: "Proposals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DealHasProposals_DealId",
-                table: "DealHasProposals",
-                column: "DealId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DealHasProposals_ProposalId",
-                table: "DealHasProposals",
-                column: "ProposalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deals_CategoryId",
@@ -234,6 +205,11 @@ namespace DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Proposals_DealId",
+                table: "Proposals",
+                column: "DealId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Proposals_ExecutorId",
                 table: "Proposals",
                 column: "ExecutorId");
@@ -248,22 +224,19 @@ namespace DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DealHasProposals");
+                name: "Proposals");
 
             migrationBuilder.DropTable(
                 name: "Deals");
 
             migrationBuilder.DropTable(
-                name: "Proposals");
+                name: "Executors");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Employers");
-
-            migrationBuilder.DropTable(
-                name: "Executors");
 
             migrationBuilder.DropTable(
                 name: "Users");

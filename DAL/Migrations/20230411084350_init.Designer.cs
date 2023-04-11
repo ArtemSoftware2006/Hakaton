@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230411074554_wwe2")]
-    partial class wwe2
+    [Migration("20230411084350_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,7 +132,10 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("DealId")
+                    b.Property<DateTime>("DatePublish")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("DealId")
                         .HasColumnType("int");
 
                     b.Property<string>("Descripton")
@@ -237,15 +240,19 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entity.Proposal", b =>
                 {
-                    b.HasOne("Domain.Entity.Deal", null)
+                    b.HasOne("Domain.Entity.Deal", "Deal")
                         .WithMany("Proposals")
-                        .HasForeignKey("DealId");
+                        .HasForeignKey("DealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entity.Executor", "Executor")
                         .WithMany("Proposals")
                         .HasForeignKey("ExecutorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Deal");
 
                     b.Navigation("Executor");
                 });

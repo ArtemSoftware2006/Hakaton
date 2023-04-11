@@ -59,8 +59,17 @@ namespace DAL.Migrations
                     b.Property<int>("MinPrice")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("StopDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("location")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -129,7 +138,10 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("DealId")
+                    b.Property<DateTime>("DatePublish")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("DealId")
                         .HasColumnType("int");
 
                     b.Property<string>("Descripton")
@@ -234,15 +246,19 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entity.Proposal", b =>
                 {
-                    b.HasOne("Domain.Entity.Deal", null)
+                    b.HasOne("Domain.Entity.Deal", "Deal")
                         .WithMany("Proposals")
-                        .HasForeignKey("DealId");
+                        .HasForeignKey("DealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entity.Executor", "Executor")
                         .WithMany("Proposals")
                         .HasForeignKey("ExecutorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Deal");
 
                     b.Navigation("Executor");
                 });

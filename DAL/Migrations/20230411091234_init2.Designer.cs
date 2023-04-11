@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230411063836_adasd")]
-    partial class adasd
+    [Migration("20230411091234_init2")]
+    partial class init2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,8 +62,17 @@ namespace DAL.Migrations
                     b.Property<int>("MinPrice")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("StopDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("location")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -73,27 +82,6 @@ namespace DAL.Migrations
                     b.HasIndex("EmployerId");
 
                     b.ToTable("Deals");
-                });
-
-            modelBuilder.Entity("Domain.Entity.DealHasProposal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("DealId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProposalId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DealId");
-
-                    b.HasIndex("ProposalId");
-
-                    b.ToTable("DealHasProposals");
                 });
 
             modelBuilder.Entity("Domain.Entity.Employer", b =>
@@ -153,6 +141,12 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("DatePublish")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("DealId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Descripton")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -164,6 +158,8 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DealId");
 
                     b.HasIndex("ExecutorId");
 
@@ -229,25 +225,6 @@ namespace DAL.Migrations
                     b.Navigation("Employer");
                 });
 
-            modelBuilder.Entity("Domain.Entity.DealHasProposal", b =>
-                {
-                    b.HasOne("Domain.Entity.Deal", "Deal")
-                        .WithMany()
-                        .HasForeignKey("DealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Proposal", "Proposal")
-                        .WithMany()
-                        .HasForeignKey("ProposalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deal");
-
-                    b.Navigation("Proposal");
-                });
-
             modelBuilder.Entity("Domain.Entity.Employer", b =>
                 {
                     b.HasOne("Domain.Entity.User", "User")
@@ -272,11 +249,19 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entity.Proposal", b =>
                 {
+                    b.HasOne("Domain.Entity.Deal", "Deal")
+                        .WithMany("Proposals")
+                        .HasForeignKey("DealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entity.Executor", "Executor")
                         .WithMany("Proposals")
                         .HasForeignKey("ExecutorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Deal");
 
                     b.Navigation("Executor");
                 });
@@ -293,6 +278,11 @@ namespace DAL.Migrations
             modelBuilder.Entity("Domain.Entity.Category", b =>
                 {
                     b.Navigation("Deals");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Deal", b =>
+                {
+                    b.Navigation("Proposals");
                 });
 
             modelBuilder.Entity("Domain.Entity.Employer", b =>

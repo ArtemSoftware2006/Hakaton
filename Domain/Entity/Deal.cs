@@ -15,6 +15,9 @@ namespace Domain.Entity
         public DateTime DatePublication { get; set; }
         public int MinPrice { get; set; }
         public int MaxPrice { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? StopDate { get; set; }
+        public string? location { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public int EmployerId { get; set; }
