@@ -58,5 +58,23 @@ namespace Hakaton.Controllers
             }
             return false;
         }
+        [HttpPost]
+        public async Task<IActionResult> SetCategory([FromBody]UserSetCategoryVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _userService.SetCategory(model);
+
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(response.Description);
+                }
+            }
+            return BadRequest("Ошибка");
+        }
     }
 }

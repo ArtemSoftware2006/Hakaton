@@ -4,7 +4,9 @@ using Domain.Enum;
 using Domain.Helper;
 using Domain.Response;
 using Domain.ViewModel.User;
+using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
+using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +66,39 @@ namespace Service.Impl
         {
             throw new NotImplementedException();
         }
+        public async Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model)
+        {
+            try
+            {
+                var user =  await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == model.UserId);   
+                if (user != null)
+                {
+                    user.CategoryId = model.CategoryId;
+                    await _userRepository.Update(user);
 
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        Description = "Ok",
+                        StatusCode = StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = $"Пользователя с id{model.UserId}",
+                    StatusCode = StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = ex.Message,
+                };
+            }
+        }
         public async Task<BaseResponse<ClaimsIdentity>> Registr(UserRegistrVM model)
         {
             try
@@ -157,6 +191,7 @@ namespace Service.Impl
             return new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
+
     }
 
 

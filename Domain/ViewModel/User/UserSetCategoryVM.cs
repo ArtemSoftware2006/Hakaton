@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.ViewModel.User
 {
-    public class UserLoginVM
+    public class UserSetCategoryVM
     {
-        public string Login { get; set; }
-        public string Password { get; set; }
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
     }
 }

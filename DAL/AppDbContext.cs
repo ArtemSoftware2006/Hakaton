@@ -19,6 +19,7 @@ namespace DAL
         public DbSet<Proposal> Proposals { get; set; }
         public AppDbContext(DbContextOptions options) : base(options)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
 
         }
