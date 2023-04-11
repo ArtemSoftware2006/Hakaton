@@ -9,6 +9,7 @@ using Domain.ViewModel.User;
 
 namespace Hakaton.Controllers
 {
+
     [Route("[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -57,6 +58,13 @@ namespace Hakaton.Controllers
                 }
             }
             return false;
+        }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
         }
         [Authorize("Executor")]
         [HttpPost]

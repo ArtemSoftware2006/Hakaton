@@ -191,8 +191,5 @@ namespace Service.Impl
             return new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
-
     }
-
-
 }
