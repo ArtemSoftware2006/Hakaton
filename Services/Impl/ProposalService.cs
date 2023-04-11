@@ -94,9 +94,35 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<Proposal>> GetByTitle(string Title)
+        public async Task<BaseResponse<List<Proposal>>> GetByDealId(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var proposals = _propposalRepository.GetAll().Where(x => x.DealId == id).ToList();
+                if (proposals.Count != 0)
+                {
+                    return new BaseResponse<List<Proposal>>()
+                    { 
+                        Data = proposals,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok
+                    };
+                }
+                return new BaseResponse<List<Proposal>>
+                {
+                    Data = proposals,
+                    Description = $"Нет Заявок выполнить запрос с id = {id}",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Proposal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
     }
 }

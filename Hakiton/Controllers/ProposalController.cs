@@ -45,5 +45,16 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Ошибка");
         }
+        [HttpGet]
+        public async Task<IActionResult> GetByDealId(int id)
+        {
+            var response = await _proposalService.GetByDealId(id);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            {
+                return Json(response.Data);
+            }
+            return BadRequest(response.Description);
+        }
     }
 }
