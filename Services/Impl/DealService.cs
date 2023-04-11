@@ -32,7 +32,7 @@ namespace Services.Impl
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
-                    EmployerId = _userRepository.GetAll().FirstOrDefault(x => x.Login == login).Id,
+                    EmployerId = 1,
                 };
 
                 await _dealRepository.Create(deal);

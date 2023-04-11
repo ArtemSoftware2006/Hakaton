@@ -26,7 +26,7 @@ namespace Hakiton.Controllers
             {
                 return Json(response.Data);
             }
-            return BadRequest("Ошибка");
+            return BadRequest(response.Description);
         }
         [Authorize("Employer")]
         [HttpPost]
@@ -39,9 +39,20 @@ namespace Hakiton.Controllers
                 {
                     return Ok();
                 }
-                return BadRequest("Ошибка");
+                return BadRequest(response.Description);
             }
             return BadRequest("Ошибка");
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetDealsByCategory(int id)
+        {
+            var response = await _dealService.GetByCetegory(id);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            {
+                return Json(response.Data);
+            }
+            return BadRequest(response.Description);
         }
     }
 }
