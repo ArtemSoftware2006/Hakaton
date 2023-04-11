@@ -29,9 +29,35 @@ namespace Service.Impl
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponse<User>> Get(int id)
+        public async Task<BaseResponse<User>> Get(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.Get(id);
+
+                if (user != null)
+                {
+                    return new BaseResponse<User>()
+                    {
+                        Data = user,
+                        Description = "Ok",
+                        StatusCode = StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<User>()
+                {
+                    Description = "нет пользователя с таким id",
+                    StatusCode = StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<User>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = ex.Message,
+                };
+            }
         }
 
         public Task<BaseResponse<User>> GetByLogin(string login)

@@ -52,7 +52,7 @@ namespace DAL.Repository
 
         public async Task<User> Get(int id)
         {
-            return await _dbContext.Users.Include(x => x.Profil).FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public IQueryable<User> GetAll()

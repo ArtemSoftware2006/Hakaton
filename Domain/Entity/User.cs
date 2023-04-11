@@ -18,6 +18,7 @@ namespace Domain.Entity
         public string? SecondName { get; set; }
         public string? LastName { get; set; }
         public string Email { get; set; }
-        public Profil? Profil { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Description { get; set; }
     }
 }

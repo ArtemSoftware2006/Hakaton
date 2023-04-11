@@ -100,5 +100,36 @@ namespace Services.Impl
         {
             throw new NotImplementedException();
         }
+
+        public async Task<BaseResponse<List<Deal>>> GetByCetegory(int id)
+        {
+            try
+            {
+                var deals = _dealRepository.GetAll().Where(x => x.CategoryId == id).ToList();
+                if (deals.Count != 0)
+                {
+                    return new BaseResponse<List<Deal>>()
+                    {
+                        Data = deals,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<List<Deal>>()
+                {
+                    Data = deals,
+                    Description = $"Нет заказов с категорией с id={id}",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Deal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
     }
 }

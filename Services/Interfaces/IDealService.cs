@@ -18,5 +18,6 @@ namespace Services.Interfaces
         Task<BaseResponse<bool>> Delete(int id);
         Task<BaseResponse<bool>> Create(string login, DealCreateVM model);
         Task<BaseResponse<List<Deal>>> GetAll();
+        Task<BaseResponse<List<Deal>>> GetByCetegory(int id);
     }
 }
