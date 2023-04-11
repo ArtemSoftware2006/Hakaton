@@ -19,5 +19,6 @@ namespace Domain.Entity
         public Category Category { get; set; }
         public int EmployerId { get; set; }
         public Employer Employer { get; set; }
+        public ICollection<Proposal> Proposals { get; set; }
     }
 }

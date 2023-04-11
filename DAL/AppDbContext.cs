@@ -13,7 +13,6 @@ namespace DAL
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Deal> Deals { get; set; }
-        public DbSet<DealHasProposal> DealHasProposals { get; set; }
         public DbSet<Employer> Employers { get; set; }
         public DbSet<Executor> Executors { get; set; }
         public DbSet<Profil> Profils { get; set; }
