@@ -27,10 +27,13 @@ namespace Services.Impl
                     Title = model.Title,
                     Description = model.Description,
                     DatePublication = DateTime.UtcNow,
+                    StartDate = model.StartDate,
+                    StopDate = model.StopDate,
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
                     Status = Domain.Enum.StatusDeal.Published,
+                    location = model.location,
                     UserId = model.UserId,
                 };
 
@@ -54,9 +57,39 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<bool>> Delete(int id)
+        public async Task<BaseResponse<bool>> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var deal = await _dealRepository.Get(id);
+
+                if (deal != null)
+                {
+                    _dealRepository.Delete(deal);
+
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = $"Нет заказа с id = {id}",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
 
         public async Task<BaseResponse<Deal>> Get(int id)
@@ -150,6 +183,47 @@ namespace Services.Impl
             catch (Exception ex)
             {
                 return new BaseResponse<List<Deal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Deal>> Update(DealUpdateVM model)
+        {
+            try
+            {
+                var deal = await _dealRepository.Get(model.Id);
+                if (deal != null)
+                {
+                    deal.MaxPrice = model.MaxPrice ?? deal.MaxPrice;
+                    deal.MinPrice = model.MinPrice ?? deal.MinPrice;
+                    deal.StartDate = model.StartDate ?? deal.StartDate;
+                    deal.StopDate = model.StopDate ?? deal.StopDate;
+                    deal.Description = model.Description ?? deal.Description;
+                    deal.Title = model.Title ?? deal.Title;
+                    deal.CategoryId = model.CategoryId ?? deal.CategoryId;
+                    deal.location = model.location ?? deal.location;
+
+                    _dealRepository.Update(deal);
+
+                    return new BaseResponse<Deal>()
+                    {
+                        Data = deal,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<Deal>()
+                {
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = $"нет заказа с id = {model.Id}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Deal>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,

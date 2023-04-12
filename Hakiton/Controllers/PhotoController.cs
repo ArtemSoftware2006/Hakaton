@@ -51,7 +51,7 @@ namespace Hakiton.Controllers
                         string downloadName = UserId + ".jpeg";
                         return File(fileStream, contentType, downloadName);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         return StatusCode(400, "У вас нет фотографии");
                     }

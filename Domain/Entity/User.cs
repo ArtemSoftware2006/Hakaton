@@ -18,5 +18,6 @@ namespace Domain.Entity
         public Category? Category { get; set; }
         public ICollection<Proposal> Proposals { get; set; }
         public ICollection<Deal> Deals { get; set; }
+        public ICollection<Message> Messages{ get; set; }
     }
 }
