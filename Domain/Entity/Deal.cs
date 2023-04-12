@@ -14,6 +14,8 @@ namespace Domain.Entity
         public DateTime? StopDate { get; set; }
         public string? location { get; set; }
         public StatusDeal Status { get; set; }
+        public int? ApprovedDealId { get; set; }
+        public ApprovedDeal? ApprovedDeal { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public int UserId { get; set; }

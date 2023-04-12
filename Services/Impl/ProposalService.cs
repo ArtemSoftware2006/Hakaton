@@ -34,6 +34,7 @@ namespace Services.Impl
                         UserId = model.UserId,
                         DealId = model.DealId,
                         DatePublish = DateTime.UtcNow,
+                        Status = Domain.Enum.StatusDeal.Published,
                     };
                     await _propposalRepository.Create(proposal);
                     return new BaseResponse<bool>()
