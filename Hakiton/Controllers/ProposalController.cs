@@ -64,5 +64,64 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
+        [HttpGet]
+        public async Task<IActionResult> Get(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = await _proposalService.Get(id);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Json(response.Data);
+                    }
+                    return StatusCode(400,response.Description);
+                }
+
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] ProposalUpdateVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = await _proposalService.Update(model);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Ok();
+                    }
+                    if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                    {
+                        return StatusCode(400, response.Description);
+                    }
+                    return StatusCode(500, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Ошибка");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = _proposalService.Delete(id);
+                    return Ok();
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
+
     }
 }

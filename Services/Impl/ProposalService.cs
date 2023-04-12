@@ -191,7 +191,7 @@ namespace Services.Impl
             try
             {
                 var proposal = await _proposalRepository.Get(model.Id);
-                if (proposal == null)
+                if (proposal != null)
                 {
                     proposal.Price = model.Price ?? proposal.Price;
                     proposal.Descripton = model.Descripton ?? model.Descripton;
@@ -208,7 +208,7 @@ namespace Services.Impl
 
                 return new BaseResponse<Proposal>()
                 {
-                    Description = "Вы уже отправили заявку",
+                    Description = $"нет заявки с id = {model.Id}",
                     StatusCode = Domain.Enum.StatusCode.NotFound,
                 };
             }
