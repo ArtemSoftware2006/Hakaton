@@ -13,18 +13,18 @@ namespace Services.Impl
 {
     public class ProposalService : IProposalService
     {
-        public IProposalRepository _propposalRepository { get; set; }
+        public IProposalRepository _proposalRepository { get; set; }
 
         public ProposalService(IProposalRepository propposalRepository)
         {
-            _propposalRepository = propposalRepository;
+            _proposalRepository = propposalRepository;
         }
 
         public async Task<BaseResponse<bool>> Create(ProposalCreateVM model)
         {
             try
             {
-                var proposal = _propposalRepository.GetAll().Where(x => x.DealId == model.DealId && x.UserId == model.UserId).FirstOrDefault();
+                var proposal = _proposalRepository.GetAll().Where(x => x.DealId == model.DealId && x.UserId == model.UserId).FirstOrDefault();
                 if (proposal == null)
                 {
                     proposal = new Proposal()
@@ -36,7 +36,7 @@ namespace Services.Impl
                         DatePublish = DateTime.UtcNow,
                         Status = Domain.Enum.StatusDeal.Published,
                     };
-                    await _propposalRepository.Create(proposal);
+                    await _proposalRepository.Create(proposal);
                     return new BaseResponse<bool>()
                     {
                         Data = true,
@@ -77,7 +77,7 @@ namespace Services.Impl
         {
             try
             {
-                var proposals = _propposalRepository.GetAll().ToList();
+                var proposals = _proposalRepository.GetAll().ToList();
                 if (proposals.Count != 0)
                 {
                     return new BaseResponse<List<Proposal>>()
@@ -108,7 +108,7 @@ namespace Services.Impl
         {
             try
             {
-                var proposals = _propposalRepository.GetAll().Where(x => x.DealId == id).ToList();
+                var proposals = _proposalRepository.GetAll().Where(x => x.DealId == id).ToList();
                 if (proposals.Count != 0)
                 {
                     return new BaseResponse<List<Proposal>>()

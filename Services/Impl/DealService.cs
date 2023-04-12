@@ -94,7 +94,7 @@ namespace Services.Impl
         {
             try
             {
-                var deals = _dealRepository.GetAll().ToList();
+                var deals = _dealRepository.GetAll().Where(x => x.Status == Domain.Enum.StatusDeal.Published).ToList();
                 if (deals.Count != 0)
                 {
                     return new BaseResponse<List<Deal>>()
