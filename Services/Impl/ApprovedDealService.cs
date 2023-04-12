@@ -66,12 +66,6 @@ namespace Services.Impl
                 };
             }
         }
-
-        public Task<BaseResponse<bool>> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<BaseResponse<List<Deal>>> GetAllConfirmDeal(int EmployerId)
         {
             try
@@ -133,6 +127,10 @@ namespace Services.Impl
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,
                 };
             }
+        }
+        public Task<BaseResponse<bool>> Delete(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<BaseResponse<List<Deal>>> GetByCetegory(int id)
