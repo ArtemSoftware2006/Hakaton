@@ -207,7 +207,7 @@ namespace Services.Impl
                     deal.CategoryId = model.CategoryId ?? deal.CategoryId;
                     deal.location = model.location ?? deal.location;
 
-                    _dealRepository.Update(deal);
+                    await _dealRepository.Update(deal);
 
                     return new BaseResponse<Deal>()
                     {

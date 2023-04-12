@@ -6,6 +6,7 @@ namespace Services.Interfaces
 {
     public interface IProposalService
     {
+        Task<BaseResponse<Proposal>> Update(ProposalUpdateVM model);
         Task<BaseResponse<Proposal>> Get(int id);
         Task<BaseResponse<List<Proposal>>> GetByDealId(int id);
         Task<BaseResponse<bool>> Delete(int id);

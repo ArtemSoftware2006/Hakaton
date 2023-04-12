@@ -63,14 +63,65 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<bool>> Delete(int id)
+        public async Task<BaseResponse<bool>> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var proposal = await _proposalRepository.Get(id);
+                if (proposal != null)
+                {
+                    _proposalRepository.Delete(proposal);
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        Description = "Ok",
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = $"нет заявки с id = {id}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
 
-        public Task<BaseResponse<Proposal>> Get(int id)
+        public async Task<BaseResponse<Proposal>> Get(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var proposal = await _proposalRepository.Get(id);
+                if (proposal != null)
+                {
+                    return new BaseResponse<Proposal>()
+                    {
+                        Data = proposal,
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        Description = "Ok",
+                    };
+                }
+                return new BaseResponse<Proposal>()
+                {
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = $"нет заявки с id = {id}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Proposal>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
         }
 
         public async Task<BaseResponse<List<Proposal>>> GetAll()
@@ -128,6 +179,42 @@ namespace Services.Impl
             catch (Exception ex)
             {
                 return new BaseResponse<List<Proposal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Proposal>> Update(ProposalUpdateVM model)
+        {
+            try
+            {
+                var proposal = await _proposalRepository.Get(model.Id);
+                if (proposal == null)
+                {
+                    proposal.Price = model.Price ?? proposal.Price;
+                    proposal.Descripton = model.Descripton ?? model.Descripton;
+
+                    await _proposalRepository.Update(proposal);
+
+                    return new BaseResponse<Proposal>()
+                    {
+                        Data = proposal,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+
+                return new BaseResponse<Proposal>()
+                {
+                    Description = "Вы уже отправили заявку",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Proposal>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,
