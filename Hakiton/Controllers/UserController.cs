@@ -32,7 +32,7 @@ namespace Hakaton.Controllers
 
                     return Ok();
                 }
-                return NotFound();
+                return StatusCode(400, response.Description);
             }
             return BadRequest("Модель не валидна");
         }
@@ -49,7 +49,7 @@ namespace Hakaton.Controllers
 
                     return Ok();
                 }
-                return NotFound(); 
+                return StatusCode(400,response.Description);
             }
             return BadRequest("Модель не валидна");
         }
