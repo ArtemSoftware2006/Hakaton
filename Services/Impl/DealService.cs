@@ -32,6 +32,7 @@ namespace Services.Impl
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
+                    Status = Domain.Enum.StatusDeal.Published,
                     UserId = model.UserId,
                 };
 

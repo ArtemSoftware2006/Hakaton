@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Enum;
 
 namespace Domain.Entity
 {
@@ -18,6 +13,7 @@ namespace Domain.Entity
         public DateTime? StartDate { get; set; }
         public DateTime? StopDate { get; set; }
         public string? location { get; set; }
+        public StatusDeal Status { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public int UserId { get; set; }
