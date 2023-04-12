@@ -17,11 +17,11 @@ namespace Hakiton.Controllers
                 {
                     if (avatar != null)
                     {
-                        if (!Directory.Exists(Environment.CurrentDirectory + "\\Avatars\\"))
+                        if (!Directory.Exists(Environment.CurrentDirectory + "/Avatars/"))
                         {
-                            Directory.CreateDirectory(Environment.CurrentDirectory + "\\Avatars\\");
+                            Directory.CreateDirectory(Environment.CurrentDirectory + "/Avatars/");
                         }
-                        string path = "\\Avatars\\" + UserId + ".jpeg";
+                        string path = "/Avatars/" + UserId + ".jpeg";
 
                         using (var fileStream = new FileStream(Environment.CurrentDirectory + path, FileMode.Create))
                         {
@@ -42,7 +42,7 @@ namespace Hakiton.Controllers
             {
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    string path = Environment.CurrentDirectory + "\\Avatars\\" + UserId + ".jpeg";
+                    string path = Environment.CurrentDirectory + "/Avatars/" + UserId + ".jpeg";
 
                     if (System.IO.File.Exists(path))
                     {
@@ -61,7 +61,7 @@ namespace Hakiton.Controllers
             if (ModelState.IsValid)
             {
                 var files = new List<AvatarVM>();
-                DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory + "\\Avatars");
+                DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory + "/Avatars");
 
                 foreach(var item in dir.GetFiles())
                 {

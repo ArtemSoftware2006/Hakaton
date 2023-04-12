@@ -16,13 +16,13 @@ namespace Hakiton.Controllers
             _approvedDealService = approvedDealService;
         }
         [HttpPost]
-        public async Task<IActionResult> ApprovedDeal(int dealId,int UserId)
+        public async Task<IActionResult> ApprovedDeal(int dealId,int proposalId)
         {
             if (ModelState.IsValid)
             {
                 if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
                 {
-                    var response = await _approvedDealService.ConfirmDeal(dealId, UserId);
+                    var response = await _approvedDealService.ConfirmDeal(dealId, proposalId);
 
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
