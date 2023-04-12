@@ -23,7 +23,7 @@ namespace Hakiton.Controllers
             {
                 var response = await _categoryService.GetAll();
 
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                 {
                     return Json(response.Data.ToList());
                 }

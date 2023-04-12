@@ -221,5 +221,36 @@ namespace Services.Impl
                 };
             }
         }
+
+        public async Task<BaseResponse<List<Proposal>>> GetByUserId(int id)
+        {
+            try
+            {
+                var proposals = _proposalRepository.GetAll().Where(x => x.UserId == id).ToList();
+                if (proposals.Count != 0)
+                {
+                    return new BaseResponse<List<Proposal>>()
+                    {
+                        Data = proposals,
+                        Description = "ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<List<Proposal>>
+                {
+                    Data = proposals,
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = "нет заявок",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Proposal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
     }
 }

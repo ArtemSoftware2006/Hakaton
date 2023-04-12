@@ -93,11 +93,11 @@ namespace Hakaton.Controllers
                 {
                     var response = await _userService.GetAllUsers();
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
                         return Json(response.Data);
                     }
-                    return StatusCode(500, response.Description);
+                    return StatusCode(400, response.Description);
                 }
                 return StatusCode(403);
             }
@@ -112,11 +112,11 @@ namespace Hakaton.Controllers
                 {
                     var response = await _userService.GetExecutorByCategory(id);
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
                         return Json(response.Data);
                     }
-                    return StatusCode(500, response.Description);
+                    return StatusCode(400, response.Description);
                 }
                 return StatusCode(403);
             }

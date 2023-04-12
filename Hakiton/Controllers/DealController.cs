@@ -33,7 +33,7 @@ namespace Hakiton.Controllers
         {
             var response = await _dealService.GetAll();
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
                 return Json(response.Data);
             }
@@ -99,7 +99,7 @@ namespace Hakiton.Controllers
         {
             var response = await _dealService.GetByCetegory(id);
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
                 return Json(response.Data);
             }
@@ -111,7 +111,7 @@ namespace Hakiton.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _dealService.Get(id);
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                 {
                     return Json(response.Data);
                 }

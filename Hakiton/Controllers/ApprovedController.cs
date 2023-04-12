@@ -43,7 +43,7 @@ namespace Hakiton.Controllers
                 {
                     var response = await _approvedDealService.GetAllConfirmDeal(UserId);
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
                         return Json(response.Data);
                     }
@@ -62,7 +62,7 @@ namespace Hakiton.Controllers
                 {
                     var response = await _approvedDealService.GetAllConfirmProposal(UserId);
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
                         return Json(response.Data);
                     }

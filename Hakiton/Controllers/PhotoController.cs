@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.ViewModel.Photo;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
-using System.Net.Http.Headers;
 
 namespace Hakiton.Controllers
 {
@@ -18,11 +17,11 @@ namespace Hakiton.Controllers
                 {
                     if (avatar != null)
                     {
-                        if (!Directory.Exists(Environment.CurrentDirectory + "/Avatars/"))
+                        if (!Directory.Exists(Environment.CurrentDirectory + "\\Avatars\\"))
                         {
-                            Directory.CreateDirectory(Environment.CurrentDirectory + "/Avatars/");
+                            Directory.CreateDirectory(Environment.CurrentDirectory + "\\Avatars\\");
                         }
-                        string path = "/Avatars/" + UserId + ".jpeg";
+                        string path = "\\Avatars\\" + UserId + ".jpeg";
 
                         using (var fileStream = new FileStream(Environment.CurrentDirectory + path, FileMode.Create))
                         {
@@ -43,24 +42,35 @@ namespace Hakiton.Controllers
             {
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    try
+                    string path = Environment.CurrentDirectory + "\\Avatars\\" + UserId + ".jpeg";
+
+                    if (System.IO.File.Exists(path))
                     {
-                        string path = Environment.CurrentDirectory + "/Avatars/" + UserId + ".jpeg";
-                        FileStream fileStream = new FileStream(path, FileMode.Open);
-                        string contentType = "image/jpeg";
-                        string downloadName = UserId + ".jpeg";
-                        return File(fileStream, contentType, downloadName);
+                        return Json(path);
                     }
-                    catch (Exception)
-                    {
-                        return StatusCode(400, "У вас нет фотографии");
-                    }
+                    return Json(path);
+                    // return StatusCode(400, "У вас нет фотографии");
                 }
                 return StatusCode(403);
             }
             return BadRequest("Модель не валидна");
         }
+        [HttpGet]
+        public async Task<IActionResult> LoadAllAvatar()
+        {
+            if (ModelState.IsValid)
+            {
+                var files = new List<AvatarVM>();
+                DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory + "\\Avatars");
 
+                foreach(var item in dir.GetFiles())
+                {
+                    files.Add(new AvatarVM { Path = item.FullName, UserId = int.Parse(Path.GetFileNameWithoutExtension(item.Name)) });
+                }
+                return Json(files);
+            }
+            return BadRequest("Модель не валидна");
+        }
 
     }
 }

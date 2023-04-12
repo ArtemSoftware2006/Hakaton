@@ -24,7 +24,18 @@ namespace Hakiton.Controllers
         {
             var response = await _proposalService.GetAll();
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            {
+                return Json(response.Data);
+            }
+            return BadRequest(response.Description);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetByUserId(int UserId)
+        {
+            var response = await _proposalService.GetByUserId(UserId);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok ||response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
                 return Json(response.Data);
             }
@@ -58,7 +69,7 @@ namespace Hakiton.Controllers
         {
             var response = await _proposalService.GetByDealId(id);
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
                 return Json(response.Data);
             }
