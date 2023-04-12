@@ -14,11 +14,9 @@ namespace Services.Impl
     public class DealService : IDealService
     {
         public IDealRepository _dealRepository { get; set; }
-        public IUserRepository _userRepository { get; set; }
         public DealService(IDealRepository dealRepository, IUserRepository userRepository)
         {
             _dealRepository = dealRepository;
-            _userRepository = userRepository;
         }
         public async Task<BaseResponse<bool>> Create( DealCreateVM model)
         {
