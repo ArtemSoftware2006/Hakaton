@@ -6,6 +6,7 @@ using Service.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Domain.ViewModel.User;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace Hakaton.Controllers
 {
@@ -83,7 +84,25 @@ namespace Hakaton.Controllers
             }
             return BadRequest("Модель не валидна");
         }
-        //[Authorize("Executor")]
+        [HttpPut]
+        public async Task<IActionResult> VIP(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                {
+                    var response = await _userService.VIP(id);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Ok();
+                    }
+                    return StatusCode(400, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {

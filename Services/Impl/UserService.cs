@@ -113,7 +113,9 @@ namespace Service.Impl
                         Email = model.Email,
                         Login = model.Login,
                         Password = HashPasswordHelper.HashPassword(model.Password),
-                        Role = (Role)model.Role
+                        Role = (Role)model.Role,
+                        Balance = model.Role == ((int)Role.Executor) ? 1000 : 0,
+                        IsVIP = false,
                     };
 
                     await _userRepository.Create(user);
@@ -218,7 +220,40 @@ namespace Service.Impl
                 return new BaseResponse<List<User>>
                 {
                     StatusCode = StatusCode.InternalServiseError,
-                    Description = $"[Login(User)] : {ex.Message})",
+                    Description = ex.Message,
+                };
+            }
+        }
+        public async Task<BaseResponse<bool>> VIP(int id)
+        {
+            try
+            {
+                var user = await _userRepository.Get(id);
+                if (user != null && user.Balance >= 500 && user.IsVIP == false)
+                {
+                    user.Balance -= 500;
+                    user.IsVIP = true;
+                    await _userRepository.Update(user);
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        StatusCode = StatusCode.Ok,
+                        Description = "Ok",
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    StatusCode = StatusCode.NotFound,
+                    Description = $"нет пользователя с id = {id}",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>()
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = ex.Message,
                 };
             }
         }

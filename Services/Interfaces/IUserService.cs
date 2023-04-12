@@ -17,6 +17,7 @@ namespace Service.Interfaces
         Task<BaseResponse<User>> GetByLogin(string login);
         Task<BaseResponse<List<User>>> GetAllUsers();
         Task<BaseResponse<bool>> Delete(int id);
+        Task<BaseResponse<bool>> VIP(int id);
         Task<BaseResponse<bool>> Update(UserUpdateVM model);
         Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model);
         Task<BaseResponse<ClaimsIdentity>> Registr(UserRegistrVM model);
