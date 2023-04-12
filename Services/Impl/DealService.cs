@@ -2,6 +2,7 @@
 using Domain.Entity;
 using Domain.Response;
 using Domain.ViewModel.Deal;
+using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -194,7 +195,7 @@ namespace Services.Impl
         {
             try
             {
-                var deal = await _dealRepository.Get(model.Id);
+                var deal = await _dealRepository.GetAll().FirstOrDefaultAsync(x=> x.Id == model.Id && x.Status == Domain.Enum.StatusDeal.Published);
                 if (deal != null)
                 {
                     deal.MaxPrice = model.MaxPrice ?? deal.MaxPrice;

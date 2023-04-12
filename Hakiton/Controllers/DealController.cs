@@ -39,7 +39,7 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update([FromBody] DealUpdateVM model)
         {
             if (ModelState.IsValid)
@@ -47,6 +47,24 @@ namespace Hakiton.Controllers
                 if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
                 {
                     var response = await _dealService.Update(model);
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
+                        return Ok();
+                    }
+                    return StatusCode(400, response.Description);
+                }
+                return StatusCode(403);
+            }
+            return BadRequest("Модель не валидна");
+        }
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                {
+                    var response = await _dealService.Delete(id);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
                         return Ok();
@@ -55,8 +73,9 @@ namespace Hakiton.Controllers
                 }
                 return StatusCode(403);
             }
-            return BadRequest("Модель не валидна");
+            return BadRequest("Ошибка");
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DealCreateVM model)
         {
