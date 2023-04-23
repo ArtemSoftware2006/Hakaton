@@ -65,7 +65,7 @@ namespace Hakaton.Controllers
             return StatusCode(403);
 
         }
-        [HttpPut]
+        [HttpPatch]
         public async Task<IActionResult> Update([FromBody] UserUpdateVM model)
         {
             if (ModelState.IsValid)

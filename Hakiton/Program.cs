@@ -32,6 +32,16 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService,CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
 
+var AllowAllOrigins = "AllowAll";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowAllOrigins, builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -62,6 +72,7 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+app.UseCors(AllowAllOrigins);
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 

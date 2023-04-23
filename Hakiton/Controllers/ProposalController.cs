@@ -95,7 +95,7 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Модель не валидна");
         }
-        [HttpPut]
+        [HttpPatch]
         public async Task<IActionResult> Update([FromBody] ProposalUpdateVM model)
         {
             if (ModelState.IsValid)

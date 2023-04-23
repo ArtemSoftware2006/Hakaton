@@ -18,15 +18,6 @@ namespace Hakiton.Controllers
         {
             _dealService = dealService;
         }
-        [HttpGet]
-        public async Task<IActionResult> Test()
-        {
-            if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
-            {
-                return Json("HelloWorld");
-            }
-            return StatusCode(403,"fdasdas");
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetDeals()
@@ -39,7 +30,7 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
-        [HttpPut]
+        [HttpPatch]
         public async Task<IActionResult> Update([FromBody] DealUpdateVM model)
         {
             if (ModelState.IsValid)
