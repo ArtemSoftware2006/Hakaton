@@ -265,9 +265,9 @@ namespace Service.Impl
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
-
-            return new ClaimsIdentity(claims, "ApplicationCookie",
-                ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity claimsIdentity =
+               new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            return claimsIdentity;
         }
 
         public async Task<BaseResponse<bool>> Update(UserUpdateVM model)

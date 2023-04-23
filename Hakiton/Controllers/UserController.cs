@@ -7,6 +7,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Domain.ViewModel.User;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Hakiton;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Principal;
 
 namespace Hakaton.Controllers
 {
@@ -29,8 +33,22 @@ namespace Hakaton.Controllers
 
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Data));
+                    var now = DateTime.UtcNow;
 
+                    var jwt = new JwtSecurityToken
+                    (
+                        issuer: AuthTokenOptions.ISSUER,
+                        audience: AuthTokenOptions.AUDIENCE,
+                        notBefore: now,
+                        claims: response.Data.Claims,
+                        expires: now.Add(TimeSpan.FromMinutes(AuthTokenOptions.LIFETIME)),
+                        signingCredentials: new SigningCredentials(AuthTokenOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
+                    );
+
+                    var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+
+                    HttpContext.Response.Cookies.Append("Authorization", encodedJwt);
                     return Ok();
                 }
                 return StatusCode(400, response.Description);
@@ -46,7 +64,21 @@ namespace Hakaton.Controllers
 
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(response.Data));
+                    var now = DateTime.UtcNow;
+
+                    var jwt = new JwtSecurityToken
+                    (
+                        issuer: AuthTokenOptions.ISSUER,
+                        audience: AuthTokenOptions.AUDIENCE,
+                        notBefore: now,
+                        claims: response.Data.Claims,
+                        expires: now.Add(TimeSpan.FromMinutes(AuthTokenOptions.LIFETIME)),
+                        signingCredentials: new SigningCredentials(AuthTokenOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
+                    );
+
+                    var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                    HttpContext.Response.Cookies.Append("Authorization", encodedJwt);
 
                     return Ok();
                 }
@@ -59,7 +91,7 @@ namespace Hakaton.Controllers
         {
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.Response.Cookies.Delete("Authorization");
                 return Ok();
             }
             return StatusCode(403);

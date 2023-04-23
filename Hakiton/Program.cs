@@ -1,7 +1,9 @@
 using DAL;
 using DAL.Interfaces;
 using DAL.Repository;
+using Hakiton;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Service.Impl;
 using Service.Interfaces;
@@ -44,11 +46,26 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
-        options.LoginPath = "/Home/Index";
-    });
+        SaveSigninToken = true,
+        ValidateIssuer = false,
+
+        ValidateAudience = false,
+        ValidateLifetime = true,
+
+        IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
+        ValidateIssuerSigningKey = true,
+    };
+});
 
 builder.Services.AddAuthorization(options =>
 {
