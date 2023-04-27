@@ -99,7 +99,7 @@ namespace Service.Impl
                 };
             }
         }
-        public async Task<BaseResponse<ClaimsIdentity>> Registr(UserRegistrVM model)
+        public async Task<BaseResponse<User>> Registr(UserRegistrVM model)
         {
             try
             {
@@ -119,21 +119,17 @@ namespace Service.Impl
                     };
 
                     await _userRepository.Create(user);
-                    
 
-                    var result = Authenticate(user);
-
-
-                    return new BaseResponse<ClaimsIdentity>
+                    return new BaseResponse<User>
                     {
                         StatusCode = StatusCode.Ok,
                         Description = "OK",
-                        Data = result,
+                        Data = user,
                     };
                 }
                 else
                 {
-                    return new BaseResponse<ClaimsIdentity>
+                    return new BaseResponse<User>
                     {
                         StatusCode = StatusCode.NotFound,
                         Description = "Пользователь с таким логином или почтой существует",
@@ -142,14 +138,14 @@ namespace Service.Impl
             }
             catch (Exception ex)
             {
-                return new BaseResponse<ClaimsIdentity>
+                return new BaseResponse<User>
                 {
                     StatusCode = StatusCode.InternalServiseError,
                     Description = ex.Message,
                 };
             }
         }
-        public async Task<BaseResponse<ClaimsIdentity>> Login(UserLoginVM model)
+        public async Task<BaseResponse<User>> Login(UserLoginVM model)
         {
             try
             {
@@ -157,16 +153,14 @@ namespace Service.Impl
 
                 if (user != null)
                 {
-                    var result = Authenticate(user);
-
-                    return new BaseResponse<ClaimsIdentity>
+                    return new BaseResponse<User>
                     {
                         StatusCode = StatusCode.Ok,
                         Description = "OK",
-                        Data = result,
+                        Data = user,
                     };
                 }
-                return new BaseResponse<ClaimsIdentity>
+                return new BaseResponse<User>
                 {
                     StatusCode = StatusCode.NotFound,
                     Description = "Неверный логин или пароль.",
@@ -174,7 +168,7 @@ namespace Service.Impl
             }
             catch (Exception ex)
             {
-                return new BaseResponse<ClaimsIdentity>
+                return new BaseResponse<User>
                 {
                     StatusCode = StatusCode.InternalServiseError,
                     Description = $"[Login(User)] : {ex.Message})",
@@ -257,19 +251,6 @@ namespace Service.Impl
                 };
             }
         }
-
-        private ClaimsIdentity Authenticate(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
-            ClaimsIdentity claimsIdentity =
-               new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            return claimsIdentity;
-        }
-
         public async Task<BaseResponse<bool>> Update(UserUpdateVM model)
         {
             try

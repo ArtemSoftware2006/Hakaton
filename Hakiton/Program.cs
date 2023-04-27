@@ -34,7 +34,10 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService,CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
 
+builder.Services.AddControllers();
+
 var AllowAllOrigins = "AllowAll";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(AllowAllOrigins, builder =>
@@ -44,7 +47,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
-builder.Services.AddControllers();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -56,14 +59,14 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
-        SaveSigninToken = true,
+        SaveSigninToken = false,
         ValidateIssuer = false,
 
         ValidateAudience = false,
-        ValidateLifetime = true,
+        ValidateLifetime = false,
 
         IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
-        ValidateIssuerSigningKey = true,
+        ValidateIssuerSigningKey = false,
     };
 });
 
@@ -92,6 +95,8 @@ var app = builder.Build();
 app.UseCors(AllowAllOrigins);
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
+app.UseRouting();
+
 
 app.UseAuthentication();
 app.UseAuthorization();

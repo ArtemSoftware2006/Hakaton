@@ -11,6 +11,8 @@ using Hakiton;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Principal;
+using Domain.Enum;
+using Domain.Entity;
 
 namespace Hakaton.Controllers
 {
@@ -33,22 +35,27 @@ namespace Hakaton.Controllers
 
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    var now = DateTime.UtcNow;
+                    List<Claim> claims = new List<Claim>()
+                    {
+                         new Claim(ClaimTypes.Name, response.Data.Login),
+                        new Claim(ClaimTypes.Role, response.Data.Role.ToString())
+                    };
+
 
                     var jwt = new JwtSecurityToken
                     (
-                        issuer: AuthTokenOptions.ISSUER,
-                        audience: AuthTokenOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: response.Data.Claims,
-                        expires: now.Add(TimeSpan.FromMinutes(AuthTokenOptions.LIFETIME)),
+                        claims: claims,
                         signingCredentials: new SigningCredentials(AuthTokenOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
                     );
 
+                    jwt.Payload["email"] = response.Data.Email;
+                    jwt.Payload["username"] = response.Data.Login;
+                    jwt.Payload["role"] = response.Data.Role.ToString();
+
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-
                     HttpContext.Response.Cookies.Append("Authorization", encodedJwt);
+
                     return Ok();
                 }
                 return StatusCode(400, response.Description);
@@ -64,17 +71,22 @@ namespace Hakaton.Controllers
 
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    var now = DateTime.UtcNow;
+                    List<Claim> claims = new List<Claim>()
+                    {
+                         new Claim(ClaimTypes.Name, response.Data.Login),
+                        new Claim(ClaimTypes.Role, response.Data.ToString())
+                    };
+
 
                     var jwt = new JwtSecurityToken
                     (
-                        issuer: AuthTokenOptions.ISSUER,
-                        audience: AuthTokenOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: response.Data.Claims,
-                        expires: now.Add(TimeSpan.FromMinutes(AuthTokenOptions.LIFETIME)),
+                        claims: claims,
                         signingCredentials: new SigningCredentials(AuthTokenOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
                     );
+
+                    jwt.Payload["email"] = response.Data.Email;
+                    jwt.Payload["username"] = response.Data.Login;
+                    jwt.Payload["role"] = response.Data.Role.ToString();
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -91,7 +103,7 @@ namespace Hakaton.Controllers
         {
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                await HttpContext.Response.Cookies.Delete("Authorization");
+                HttpContext.Response.Cookies.Delete("Authorization");
                 return Ok();
             }
             return StatusCode(403);
