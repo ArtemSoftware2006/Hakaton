@@ -6,14 +6,6 @@ using Domain.Response;
 using Domain.ViewModel.User;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Impl
 {
@@ -113,8 +105,8 @@ namespace Service.Impl
                         Email = model.Email,
                         Login = model.Login,
                         Password = HashPasswordHelper.HashPassword(model.Password),
-                        Role = (Role)model.Role,
-                        Balance = model.Role == ((int)Role.Executor) ? 1000 : 0,
+                        Role = Role.Executor,
+                        Balance = 0,
                         IsVIP = false,
                     };
 

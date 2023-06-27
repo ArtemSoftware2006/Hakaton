@@ -1,18 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Domain.ViewModel.User;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Hakiton;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Principal;
-using Domain.Enum;
-using Domain.Entity;
 
 namespace Hakaton.Controllers
 {
@@ -37,7 +29,7 @@ namespace Hakaton.Controllers
                 {
                     List<Claim> claims = new List<Claim>()
                     {
-                         new Claim(ClaimTypes.Name, response.Data.Login),
+                        new Claim(ClaimTypes.Name, response.Data.Login),
                         new Claim(ClaimTypes.Role, response.Data.Role.ToString())
                     };
 

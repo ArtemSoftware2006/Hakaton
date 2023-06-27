@@ -1,6 +1,4 @@
-﻿using Domain.Entity;
-using Domain.ViewModel.User;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -15,6 +13,12 @@ namespace Hakiton.Controllers
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> TestAuth()
+        {
+            return StatusCode(200,"Вы авторизованы");
         }
         [HttpGet]
         public async Task<IActionResult> GetCategories()
