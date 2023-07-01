@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Services.Impl;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
 namespace Hakiton.Controllers
@@ -20,7 +18,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _approvedDealService.ConfirmDeal(dealId, proposalId);
 
@@ -39,7 +37,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _approvedDealService.GetAllConfirmDeal(UserId);
 
@@ -58,7 +56,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _approvedDealService.GetAllConfirmProposal(UserId);
 

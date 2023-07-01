@@ -132,7 +132,6 @@ namespace Services.Impl
         {
             throw new NotImplementedException();
         }
-
         public Task<BaseResponse<List<Deal>>> GetByCetegory(int id)
         {
             throw new NotImplementedException();
