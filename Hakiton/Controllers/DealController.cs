@@ -35,7 +35,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _dealService.Update(model);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
@@ -53,7 +53,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _dealService.Delete(id);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
@@ -66,13 +66,12 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Ошибка");
         }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DealCreateVM model)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated /*&& HttpContext.User.IsInRole("Employer")*/)
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _dealService.Create(model);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
