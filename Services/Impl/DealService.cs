@@ -4,11 +4,6 @@ using Domain.Response;
 using Domain.ViewModel.Deal;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Impl
 {
@@ -190,7 +185,36 @@ namespace Services.Impl
                 };
             }
         }
-
+        public async Task<BaseResponse<List<Deal>>> GetByUserId(int id)
+        {
+            try
+            {
+                var deals = _dealRepository.GetAll().Where(x => x.UserId == id).ToList();
+                if (deals.Count != 0)
+                {
+                    return new BaseResponse<List<Deal>>()
+                    {
+                        Data = deals,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<List<Deal>>()
+                {
+                    Data = deals,
+                    Description = $"Нет заказов с id пользователя = {id}",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Deal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
         public async Task<BaseResponse<Deal>> Update(DealUpdateVM model)
         {
             try

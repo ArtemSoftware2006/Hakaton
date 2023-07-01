@@ -104,5 +104,16 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Ошибка");
         }
+         [HttpGet]
+        public async Task<IActionResult> GetByUserId(int id)
+        {
+            var response = await _dealService.GetByUserId(id);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            {
+                return Json(response.Data);
+            }
+            return BadRequest(response.Description);
+        }
     }
 }
