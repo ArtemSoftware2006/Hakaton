@@ -105,8 +105,8 @@ namespace Service.Impl
                         Email = model.Email,
                         Login = model.Login,
                         Password = HashPasswordHelper.HashPassword(model.Password),
-                        Role = Role.Executor,
-                        Balance = 0,
+                        Role = Role.User,
+                        Balance = 1000,
                         IsVIP = false,
                     };
 

@@ -10,7 +10,6 @@ namespace Domain.Enum
     {
         Creator = 0,
         Admin = 1,
-        Executor = 2,
-        Employer = 3,
+        User = 2
     }
 }
