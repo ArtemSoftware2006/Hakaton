@@ -167,28 +167,6 @@ namespace Service.Impl
                 };
             }
         }
-        public async Task<BaseResponse<List<User>>> GetExecutorByCategory(int id)
-        {
-            try
-            {
-                var executors = _userRepository.GetAll().Where(x => x.CategoryId == id && x.Role == Role.Executor).ToList();
-
-                return new BaseResponse<List<User>>()
-                {
-                    Data = executors,
-                    Description = "Ok",
-                    StatusCode = StatusCode.Ok,
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<List<User>>
-                {
-                    StatusCode = StatusCode.InternalServiseError,
-                    Description = $"[Login(User)] : {ex.Message})",
-                };
-            }
-        }
         public async Task<BaseResponse<List<User>>> GetAllUsers()
         {
             try
