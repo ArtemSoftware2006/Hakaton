@@ -1,10 +1,5 @@
 ﻿using Domain.ViewModel.Deal;
-using Domain.ViewModel.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Service.Interfaces;
 using Services.Interfaces;
 
 namespace Hakiton.Controllers
