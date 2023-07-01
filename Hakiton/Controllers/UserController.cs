@@ -43,6 +43,7 @@ namespace Hakaton.Controllers
                     jwt.Payload["email"] = response.Data.Email;
                     jwt.Payload["username"] = response.Data.Login;
                     jwt.Payload["role"] = response.Data.Role.ToString();
+                    jwt.Payload["id"] = response.Data.Id;
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -79,6 +80,7 @@ namespace Hakaton.Controllers
                     jwt.Payload["email"] = response.Data.Email;
                     jwt.Payload["username"] = response.Data.Login;
                     jwt.Payload["role"] = response.Data.Role.ToString();
+                    jwt.Payload["id"] = response.Data.Id;
 
                     var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -169,7 +171,7 @@ namespace Hakaton.Controllers
 
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
                     {
-                        return Json(response.Data);
+                        return StatusCode(200,response.Data);
                     }
                     return StatusCode(400, response.Description);
                 }

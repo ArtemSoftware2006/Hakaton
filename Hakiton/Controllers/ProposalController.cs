@@ -21,7 +21,7 @@ namespace Hakiton.Controllers
 
             if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
-                return Json(response.Data);
+                return StatusCode(200,response.Data);
             }
             return BadRequest(response.Description);
         }

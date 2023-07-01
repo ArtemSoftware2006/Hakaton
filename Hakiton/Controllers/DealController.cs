@@ -72,7 +72,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Employer"))
+                if (HttpContext.User.Identity.IsAuthenticated /*&& HttpContext.User.IsInRole("Employer")*/)
                 {
                     var response = await _dealService.Create(model);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
