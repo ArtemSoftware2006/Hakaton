@@ -91,6 +91,7 @@ namespace Hakiton.Controllers
             return BadRequest(response.Description);
         }
         [HttpGet]
+        [Route("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
             if (ModelState.IsValid)

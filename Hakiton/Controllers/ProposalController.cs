@@ -36,13 +36,12 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
-        //[Authorize("Executor")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProposalCreateVM model)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _proposalService.Create(model);
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
@@ -75,7 +74,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _proposalService.Get(id);
 
@@ -95,7 +94,7 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _proposalService.Update(model);
 
@@ -113,13 +112,12 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Ошибка");
         }
-
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated && HttpContext.User.IsInRole("Executor"))
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = _proposalService.Delete(id);
                     return Ok();

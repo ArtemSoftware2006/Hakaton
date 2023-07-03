@@ -6,14 +6,15 @@ namespace DAL.Repository
 {
     public class ProposalRepository : IProposalRepository
     {
+        public AppDbContext _dbContext { get; set; }
+
         public ProposalRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public AppDbContext _dbContext { get; set; }
         public async Task<bool> Create(Proposal entity)
         {
-            await _dbContext.Proposals.AddAsync(entity);
+            await _dbContext.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
 
             return true;
@@ -21,7 +22,7 @@ namespace DAL.Repository
 
         public async Task<bool> Delete(Proposal entity)
         {
-            _dbContext.Proposals.Remove(entity);
+            _dbContext.Remove(entity);
             await _dbContext.SaveChangesAsync();
 
             return true;
@@ -39,7 +40,7 @@ namespace DAL.Repository
 
         public async Task<Proposal> Update(Proposal entity)
         {
-            _dbContext.Proposals.Update(entity);
+            _dbContext.Update(entity);
             await _dbContext.SaveChangesAsync();
 
             return entity;

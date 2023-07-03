@@ -1,10 +1,5 @@
 ﻿using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL
 {
@@ -22,35 +17,6 @@ namespace DAL
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Deal>().HasData(
-            //    new Deal() 
-            //    { 
-            //        Id = 1, 
-            //        DatePublication = DateTime.UtcNow, 
-            //        Description="Напишите игру Змейка на Python", 
-            //        location="Москва",
-            //        MinPrice = 1000,
-            //        MaxPrice = 2000,
-            //        Title = "Игра Змейка",
-            //        StartDate = DateTime.UtcNow,
-            //        StopDate = DateTime.UtcNow.AddDays(3),
-            //        UserId = 1,
-            //        CategoryId = 1
-            //    },
-            //    new Deal()
-            //    {
-            //        Id = 1,
-            //        DatePublication = DateTime.UtcNow,
-            //        Description = "Разработать дизайн сайта для продажи машин",
-            //        location = "Дубна",
-            //        MinPrice = 1300,
-            //        MaxPrice = 2300,
-            //        Title = "Дизайн сайта",
-            //        StartDate = DateTime.UtcNow,
-            //        StopDate = DateTime.UtcNow.AddDays(5),
-            //        UserId = 1,
-            //        CategoryId = 2
-            //    });
             modelBuilder.Entity<Category>().HasData(
                 new Category() { Id = 1, Name = "Разработка"},
                 new Category() { Id = 2, Name = "Дизайн" },
