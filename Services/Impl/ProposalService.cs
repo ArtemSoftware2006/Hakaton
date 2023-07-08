@@ -24,7 +24,7 @@ namespace Services.Impl
                 {
                     proposal = new Proposal()
                     {
-                        Descripton = model.Descripton,
+                        Descripton = model.Description,
                         Price = model.Price,
                         UserId = model.UserId,
                         DealId = model.DealId,

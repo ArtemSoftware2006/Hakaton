@@ -46,10 +46,10 @@ namespace Hakiton.Controllers
 
                     if (System.IO.File.Exists(path))
                     {
-                        return Json(path);
+                        byte [] image =  System.IO.File.ReadAllBytes(path); 
+                        return File(image,"image/jpeg");
                     }
-                    return Json(path);
-                    // return StatusCode(400, "У вас нет фотографии");
+                    return StatusCode(400, "У вас нет фотографии");
                 }
                 return StatusCode(403);
             }
