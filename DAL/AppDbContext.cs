@@ -9,6 +9,7 @@ namespace DAL
         public DbSet<Category> Categories { get; set; }
         public DbSet<Deal> Deals { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<Avatar> Avatars { get; set; }
         public AppDbContext(DbContextOptions options) : base(options)
         {
             //Database.EnsureDeleted();

@@ -1,6 +1,8 @@
 ﻿using Domain.ViewModel.Photo;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using Amazon.S3;
+using Amazon.S3.Model;
 
 namespace Hakiton.Controllers
 {
@@ -8,15 +10,56 @@ namespace Hakiton.Controllers
     [ApiController]
     public class PhotoController : Controller
     {
+        private readonly ILogger<PhotoController> _logger;
+        private readonly string secretKey = "YCM1cYGM00G-uoIrK8-OvI2qqsjy7Z09bbM7MZAx";
+        private readonly string  accessKey = "YCAJEzoOin_R-Dc7ATcBaKPCv";
+        private readonly string bucketName = "storage-artem";
+        private readonly AmazonS3Config configsS3;
+        
+        public PhotoController(ILogger<PhotoController> logger)
+        {
+            _logger = logger;
+             configsS3 = new  AmazonS3Config() {
+                ServiceURL="https://storage.yandexcloud.net"
+            };
+        }
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(int UserId,[FromForm]IFormFile avatar)
         {
             if(ModelState.IsValid)
             {
+
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
+
                     if (avatar != null)
                     {
+                        using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
+                        {
+                            using (var memStream = new MemoryStream())
+                            {
+                                await avatar.CopyToAsync(memStream);
+                                var request = new PutObjectRequest()
+                                {
+                                    BucketName = bucketName,
+                                    Key = Guid.NewGuid().ToString(),
+                                    InputStream = memStream,
+                                    CannedACL = S3CannedACL.PublicRead
+                                };
+                                var response = await client.PutObjectAsync(request);
+                                if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                                {
+                                    _logger.LogInformation($"Файл успешно отправлен {avatar.FileName}, {request.Key})");
+                                }
+                                else
+                                {
+                                    _logger.LogError($"Ошибка загрузки файла ({avatar.FileName})");
+                                }
+                            }
+                            
+                        }
+
+
                         if (!Directory.Exists(Environment.CurrentDirectory + "/Avatars/"))
                         {
                             Directory.CreateDirectory(Environment.CurrentDirectory + "/Avatars/");
@@ -40,6 +83,16 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
+                using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
+                {
+                    var list = await client.ListBucketsAsync();
+
+                    foreach (var item in list.Buckets)
+                    {
+                        _logger.LogInformation( "Busket : " + item.BucketName);                        
+                    }
+                }
+
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     string path = Environment.CurrentDirectory + "/Avatars/" + UserId + ".jpeg";
