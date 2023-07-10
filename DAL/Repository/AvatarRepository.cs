@@ -27,9 +27,9 @@ namespace DAL.Repository
             return true;
         }
 
-        public async Task<Avatar> Get(int id)
+        public async Task<Avatar> Get(int UserId)
         {
-            return await _dbContext.Avatars.FirstOrDefaultAsync(x=>x.Id == id);
+            return await _dbContext.Avatars.FirstOrDefaultAsync(x=>x.UserId == UserId);
         }
 
         public IQueryable<Avatar> GetAll()

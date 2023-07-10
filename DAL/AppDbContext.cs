@@ -10,10 +10,10 @@ namespace DAL
         public DbSet<Deal> Deals { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<Avatar> Avatars { get; set; }
-        public AppDbContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             //Database.EnsureDeleted();
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
 
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

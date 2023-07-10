@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Domain.ViewModel.Avatar;
+using Services.Interfaces;
 
 namespace Hakiton.Controllers
 {
@@ -11,17 +13,14 @@ namespace Hakiton.Controllers
     public class PhotoController : Controller
     {
         private readonly ILogger<PhotoController> _logger;
-        private readonly string secretKey = "YCM1cYGM00G-uoIrK8-OvI2qqsjy7Z09bbM7MZAx";
-        private readonly string  accessKey = "YCAJEzoOin_R-Dc7ATcBaKPCv";
-        private readonly string bucketName = "storage-artem";
-        private readonly AmazonS3Config configsS3;
-        
-        public PhotoController(ILogger<PhotoController> logger)
+
+        private readonly IAvatarService _service;
+
+        public PhotoController(ILogger<PhotoController> logger,IAvatarService service)
         {
+            _service = service;
             _logger = logger;
-             configsS3 = new  AmazonS3Config() {
-                ServiceURL="https://storage.yandexcloud.net"
-            };
+    
         }
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(int UserId,[FromForm]IFormFile avatar)
@@ -32,47 +31,30 @@ namespace Hakiton.Controllers
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
 
-                    if (avatar != null)
+                    if (avatar == null)
                     {
-                        using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
-                        {
-                            using (var memStream = new MemoryStream())
-                            {
-                                await avatar.CopyToAsync(memStream);
-                                var request = new PutObjectRequest()
-                                {
-                                    BucketName = bucketName,
-                                    Key = Guid.NewGuid().ToString(),
-                                    InputStream = memStream,
-                                    CannedACL = S3CannedACL.PublicRead
-                                };
-                                var response = await client.PutObjectAsync(request);
-                                if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                                {
-                                    _logger.LogInformation($"Файл успешно отправлен {avatar.FileName}, {request.Key})");
-                                }
-                                else
-                                {
-                                    _logger.LogError($"Ошибка загрузки файла ({avatar.FileName})");
-                                }
-                            }
-                            
-                        }
+                        return StatusCode(400, "Вы не загрузили фото");
+                    }
 
+                        
+                    var model = new CreateAvatarVM()
+                    {
+                        UserId = UserId
+                    };
 
-                        if (!Directory.Exists(Environment.CurrentDirectory + "/Avatars/"))
-                        {
-                            Directory.CreateDirectory(Environment.CurrentDirectory + "/Avatars/");
-                        }
-                        string path = "/Avatars/" + UserId + ".jpeg";
+                    
+                    await avatar.CopyToAsync(model.file);
 
-                        using (var fileStream = new FileStream(Environment.CurrentDirectory + path, FileMode.Create))
-                        {
-                            await avatar.CopyToAsync(fileStream);
-                        }
+                    var response = await _service.Create(model);
+
+                    _logger.LogInformation(response.Description);
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                    {
                         return Ok();
                     }
-                    return StatusCode(400, "Вы не загрузили фото");
+
+                    return StatusCode(400, response.Data);                       
                 }
                 return StatusCode(403);
             }
@@ -83,25 +65,18 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
-                {
-                    var list = await client.ListBucketsAsync();
-
-                    foreach (var item in list.Buckets)
-                    {
-                        _logger.LogInformation( "Busket : " + item.BucketName);                        
-                    }
-                }
 
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    string path = Environment.CurrentDirectory + "/Avatars/" + UserId + ".jpeg";
+                    var response = await _service.Get(UserId);
 
-                    if (System.IO.File.Exists(path))
+                    _logger.LogInformation($"Response : {response.Data.Length}");
+
+                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
-                        byte [] image =  System.IO.File.ReadAllBytes(path); 
-                        return File(image,"image/jpeg");
+                        return File(response.Data.ToArray(),"image/jpeg");
                     }
+
                     return StatusCode(400, "У вас нет фотографии");
                 }
                 return StatusCode(403);
