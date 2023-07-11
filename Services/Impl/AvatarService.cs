@@ -7,21 +7,26 @@ using Amazon.S3.Model;
 using Domain.ViewModel.Avatar;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 
 namespace Services.Impl
 {
     public class AvatarService : IAvatarService
     {
-        private readonly string secretKey = "YCM1cYGM00G-uoIrK8-OvI2qqsjy7Z09bbM7MZAx";
-        private readonly string  accessKey = "YCAJEzoOin_R-Dc7ATcBaKPCv";
-        private readonly string bucketName = "storage-artem";
         private readonly AmazonS3Config configsS3;
         private readonly ILogger<AvatarService> _logger;
         private readonly IAvatarRepository _repository;
         private readonly IMemoryCache _cache;
+        private readonly IConfigurationRoot config;
 
         public AvatarService(IAvatarRepository repository, ILogger<AvatarService> logger, IMemoryCache cache)
         {
+            var conf_builder = new ConfigurationBuilder();
+
+            conf_builder.SetBasePath(Directory.GetCurrentDirectory());
+            conf_builder.AddJsonFile("security.json");
+            config = conf_builder.Build();
+
             _repository = repository;
             _logger = logger;
             _cache = cache;
@@ -44,12 +49,12 @@ namespace Services.Impl
                     UserId = model.UserId,
                 };
                 
-                using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
+                using (var client = new AmazonS3Client(config.GetSection("accessKey").Value, config.GetSection("secretKey").Value, configsS3))
                 {
 
                     var request = new PutObjectRequest()
                     {
-                        BucketName = bucketName,
+                        BucketName = config.GetSection("bucketName").Value,
                         Key = avatar.Key.ToString(),
                         InputStream = model.file,
                         CannedACL = S3CannedACL.PublicRead
@@ -116,9 +121,9 @@ namespace Services.Impl
                 {
                     MemoryStream memStream = new MemoryStream();
 
-                    using (var client = new AmazonS3Client(accessKey, secretKey,configsS3))
+                    using (var client = new AmazonS3Client(config.GetSection("accessKey").Value, config.GetSection("secretKey").Value, configsS3))
                     {
-                        GetObjectResponse response = await client.GetObjectAsync(bucketName, avatar.Key.ToString());
+                        GetObjectResponse response = await client.GetObjectAsync(config.GetSection("bucketName").Value, avatar.Key.ToString());
 
                         await response.ResponseStream.CopyToAsync(memStream);
 
