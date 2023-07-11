@@ -67,6 +67,9 @@ namespace Services.Impl
                     {
                         await _repository.Create(avatar);
 
+                        _cache.Remove(model.UserId);
+                        _cache.Set(model.UserId, model.file.ToArray(), new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+
                         return new BaseResponse<bool>() 
                         {
                             Data = true,
@@ -99,15 +102,15 @@ namespace Services.Impl
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<MemoryStream>> Get(int id)
+        public async Task<BaseResponse<byte[]>> Get(int id)
         {
             try
             {
-                _cache.TryGetValue(id, out MemoryStream? file);
+                _cache.TryGetValue(id, out byte[]? file);
                 if (file != null)
                 {
                     _logger.LogInformation("Сработал кэш");
-                     return new BaseResponse<MemoryStream>()
+                     return new BaseResponse< byte[]>()
                     {
                         Data = file,
                         Description = "Ok",
@@ -132,9 +135,9 @@ namespace Services.Impl
                             _cache.Set(id, memStream,new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
                             _logger.LogInformation("Сработала связь с облаком");
 
-                            return new BaseResponse<MemoryStream>()
+                            return new BaseResponse< byte[]>()
                             {
-                                Data = memStream,
+                                Data = memStream.ToArray(),
                                 Description = "Ok",
                                 StatusCode = Domain.Enum.StatusCode.Ok,
                             };
@@ -143,7 +146,7 @@ namespace Services.Impl
                     }
                 }
 
-                return new BaseResponse<MemoryStream>()
+                return new BaseResponse< byte[]>()
                 {
                     Description = "Ошибка загрузки файла",
                     StatusCode = Domain.Enum.StatusCode.NotFound,
@@ -152,7 +155,7 @@ namespace Services.Impl
             }
             catch (Exception ex)
             {
-                return new BaseResponse<MemoryStream>()
+                return new BaseResponse< byte[]>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,

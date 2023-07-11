@@ -8,7 +8,7 @@ namespace Services.Interfaces
 {
     public interface IAvatarService
     {
-       Task<BaseResponse<MemoryStream>> Get(int id);
+       Task<BaseResponse< byte[]>> Get(int id);
         Task<BaseResponse<List<Avatar>>> GetAll();
         Task<BaseResponse<bool>> Delete(int id);
         Task<BaseResponse<bool>> Update(CreateAvatarVM model);

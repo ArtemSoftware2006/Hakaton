@@ -70,10 +70,10 @@ namespace Hakiton.Controllers
                 {
                     var response = await _service.Get(UserId);
 
-                    _logger.LogInformation($"Response : {response.Data.Length}");
-
                     if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                     {
+                        _logger.LogInformation($"Response : {response.Data.Length}");
+
                         return File(response.Data.ToArray(),"image/jpeg");
                     }
 
