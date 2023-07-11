@@ -37,6 +37,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService,CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
 
+builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(options =>

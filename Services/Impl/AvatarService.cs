@@ -6,6 +6,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Domain.ViewModel.Avatar;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Services.Impl
 {
@@ -17,11 +18,13 @@ namespace Services.Impl
         private readonly AmazonS3Config configsS3;
         private readonly ILogger<AvatarService> _logger;
         private readonly IAvatarRepository _repository;
+        private readonly IMemoryCache _cache;
 
-        public AvatarService(IAvatarRepository repository, ILogger<AvatarService> logger)
+        public AvatarService(IAvatarRepository repository, ILogger<AvatarService> logger, IMemoryCache cache)
         {
             _repository = repository;
             _logger = logger;
+            _cache = cache;
 
              configsS3 = new  AmazonS3Config() {
                 ServiceURL="https://storage.yandexcloud.net"
@@ -95,9 +98,19 @@ namespace Services.Impl
         {
             try
             {
+                _cache.TryGetValue(id, out MemoryStream? file);
+                if (file != null)
+                {
+                    _logger.LogInformation("Сработал кэш");
+                     return new BaseResponse<MemoryStream>()
+                    {
+                        Data = file,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
+                }
+                
                 var avatar = await _repository.Get(id);
-
-                _logger.LogInformation(avatar.Key.ToString());
 
                 if (avatar != null)
                 {
@@ -109,10 +122,11 @@ namespace Services.Impl
 
                         await response.ResponseStream.CopyToAsync(memStream);
 
-                        _logger.LogInformation($"Response : {response.HttpStatusCode}");
-
                         if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                         {
+                            _cache.Set(id, memStream,new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                            _logger.LogInformation("Сработала связь с облаком");
+
                             return new BaseResponse<MemoryStream>()
                             {
                                 Data = memStream,
