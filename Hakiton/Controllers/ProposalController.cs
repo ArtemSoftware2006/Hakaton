@@ -1,5 +1,6 @@
 ﻿using Domain.ViewModel.Proposal;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.Interfaces;
 
 namespace Hakiton.Controllers
@@ -65,7 +66,11 @@ namespace Hakiton.Controllers
 
             if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
-                return Json(response.Data);
+                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+                return Ok(json);
             }
             return BadRequest(response.Description);
         }

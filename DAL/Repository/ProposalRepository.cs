@@ -35,7 +35,7 @@ namespace DAL.Repository
 
         public IQueryable<Proposal> GetAll()
         {
-            return _dbContext.Proposals;
+            return _dbContext.Proposals.Include(x => x.User);
         }
 
         public async Task<Proposal> Update(Proposal entity)

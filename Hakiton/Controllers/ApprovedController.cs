@@ -7,17 +7,20 @@ namespace Hakiton.Controllers
     [ApiController]
     public class ApprovedController : Controller
     {
-        public IApprovedDealService _approvedDealService { get; set; }
+        private readonly  IApprovedDealService _approvedDealService;
+        private readonly ILogger<ApprovedController> _logger;
 
-        public ApprovedController(IApprovedDealService approvedDealService)
+        public ApprovedController(IApprovedDealService approvedDealService, ILogger<ApprovedController> logger)
         {
             _approvedDealService = approvedDealService;
+            _logger = logger;
         }
         [HttpPost]
         public async Task<IActionResult> ApprovedDeal(int dealId,int proposalId)
         {
             if (ModelState.IsValid)
             {
+                _logger.LogInformation($"Подтверждение заказа ({dealId}) на предложение ({proposalId})");
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var response = await _approvedDealService.ConfirmDeal(dealId, proposalId);

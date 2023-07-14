@@ -30,13 +30,13 @@ namespace Services.Impl
                 {
                     var proposal = await _proposalRepository.Get(ProposalId);
 
-                    if (proposal != null)
+                    if (proposal != null &&  deal.Status == Domain.Enum.StatusDeal.Published)
                     {
                         deal.Status = Domain.Enum.StatusDeal.InProcess;
                         proposal.Status = Domain.Enum.StatusDeal.InProcess;
 
-                        _dealRepository.Update(deal);
-                        _proposalRepository.Update(proposal);
+                        await _dealRepository.Update(deal);
+                        await _proposalRepository.Update(proposal);
 
                         return new BaseResponse<bool>()
                         {
@@ -44,10 +44,10 @@ namespace Services.Impl
                             Description = "Ok",
                             StatusCode = Domain.Enum.StatusCode.Ok,
                         };
-                    }
+                    }                    
                     return new BaseResponse<bool>()
                     {
-                        Description = $"нет предложения с id = {ProposalId}",
+                        Description = $"нет предложения с id = {ProposalId} или заказ уже выполянется другим заказчиком.",
                         StatusCode = Domain.Enum.StatusCode.NotFound
                     };
                 }
