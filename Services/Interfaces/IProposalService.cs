@@ -10,6 +10,7 @@ namespace Services.Interfaces
         Task<BaseResponse<Proposal>> Get(int id);
         Task<BaseResponse<List<Proposal>>> GetByDealId(int id);
         Task<BaseResponse<List<Proposal>>> GetByUserId(int id);
+        Task<BaseResponse<List<Proposal>>> GetAllByUserDeals(int id);
         Task<BaseResponse<bool>> Delete(int id);
         Task<BaseResponse<bool>> Create(ProposalCreateVM model);
         Task<BaseResponse<List<Proposal>>> GetAll();

@@ -33,8 +33,11 @@ namespace Hakiton.Controllers
 
             if (response.StatusCode == Domain.Enum.StatusCode.Ok ||response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
-                return Json(response.Data);
-            }
+                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+                return Ok(json);            }
             return BadRequest(response.Description);
         }
         [HttpPost]
@@ -63,6 +66,22 @@ namespace Hakiton.Controllers
         public async Task<IActionResult> GetByDealId(int id)
         {
             var response = await _proposalService.GetByDealId(id);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            {
+                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+                return Ok(json);
+            }
+            return BadRequest(response.Description);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllByUserDeals(int id)
+        {
+            var response = await _proposalService.GetAllByUserDeals(id);
 
             if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {

@@ -2,6 +2,7 @@
 using Domain.Entity;
 using Domain.Response;
 using Domain.ViewModel.Proposal;
+using Microsoft.Extensions.Logging;
 using Services.Interfaces;
 
 namespace Services.Impl
@@ -9,10 +10,15 @@ namespace Services.Impl
     public class ProposalService : IProposalService
     {
         public IProposalRepository _proposalRepository { get; set; }
+        public IDealRepository _dealRepository { get; set; }
+        private readonly ILogger<ProposalService> _logger; 
 
-        public ProposalService(IProposalRepository propposalRepository)
+
+        public ProposalService(IProposalRepository propposalRepository, IDealRepository dealRepository, ILogger<ProposalService> logger)
         {
             _proposalRepository = propposalRepository;
+            _dealRepository = dealRepository;
+            _logger = logger;
         }
 
         public async Task<BaseResponse<bool>> Create(ProposalCreateVM model)
@@ -247,5 +253,39 @@ namespace Services.Impl
                 };
             }
         }
+
+        public async Task<BaseResponse<List<Proposal>>> GetAllByUserDeals(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Id пользователя = {id}");
+                var userDeals = _dealRepository.GetAll().Where(x => x.UserId == id).Select(x => x.Id);
+                _logger.LogInformation($"Количество Заказов = {userDeals.Count()}");
+                var proposals = _proposalRepository.GetAll().Where(x => userDeals.Contains(x.DealId)).ToList();
+
+                if (proposals.Count() != 0)
+                {
+                    return new BaseResponse<List<Proposal>>()
+                    { 
+                        Data = proposals,
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok
+                    };
+                }
+                return new BaseResponse<List<Proposal>>
+                {
+                    Data = proposals,
+                    Description = $"Нет Заявок на выполнение заказа для пользователя с id = {id}",
+                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Proposal>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }        }
     }
 }
