@@ -193,8 +193,20 @@ namespace Service.Impl
             try
             {
                 var user = await _userRepository.Get(id);
-                if (user != null && user.Balance >= 500 && user.IsVIP == false)
+
+
+                if (user != null)
                 {
+                    if (user.Balance <= 500 && user.IsVIP == false)
+                    {
+                        return new BaseResponse<bool>()
+                        {
+                            Data = false,
+                            StatusCode = StatusCode.NotFound,
+                            Description = $"не хватает денег на балансе или уже есть VIP статус.."
+                        };
+                    }
+
                     user.Balance -= 500;
                     user.IsVIP = true;
                     await _userRepository.Update(user);
