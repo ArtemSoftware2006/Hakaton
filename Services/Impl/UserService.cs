@@ -11,10 +11,12 @@ namespace Service.Impl
 {
     public class UserService : IUserService
     {
-        public IUserRepository _userRepository { get; set; }
+        private readonly IUserRepository _userRepository;
+        private readonly IMoneyRepository _moneyRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IMoneyRepository moneyRepository)
         {
+            _moneyRepository = moneyRepository;
             _userRepository = userRepository;
         }
 
@@ -197,7 +199,7 @@ namespace Service.Impl
 
                 if (user != null)
                 {
-                    if (user.Balance <= 500 && user.IsVIP == false)
+                    if (user.Balance <= 500 || user.IsVIP == true)
                     {
                         return new BaseResponse<bool>()
                         {
@@ -207,14 +209,22 @@ namespace Service.Impl
                         };
                     }
 
-                    user.Balance -= 500;
-                    user.IsVIP = true;
-                    await _userRepository.Update(user);
-                    return new BaseResponse<bool>()
+                    if (await _moneyRepository.WithdrawMoney(user.Id, 500))
                     {
-                        Data = true,
-                        StatusCode = StatusCode.Ok,
-                        Description = "Ok",
+                        user.IsVIP = true;
+                        await _userRepository.Update(user);
+                        return new BaseResponse<bool>()
+                        {
+                            Data = true,
+                            StatusCode = StatusCode.Ok,
+                            Description = "Ok",
+                        };
+                    }
+                    return new BaseResponse<bool>() 
+                    {
+                         Data = false,
+                        StatusCode = StatusCode.NotFound,
+                        Description = "Ошибка транзакции средств с счёта пользователя.",
                     };
                 }
                 return new BaseResponse<bool>()
