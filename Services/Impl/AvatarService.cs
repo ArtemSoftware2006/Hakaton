@@ -132,7 +132,7 @@ namespace Services.Impl
 
                         if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                         {
-                            _cache.Set(id, memStream,new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                            _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
                             _logger.LogInformation("Сработала связь с облаком");
 
                             return new BaseResponse< byte[]>()
