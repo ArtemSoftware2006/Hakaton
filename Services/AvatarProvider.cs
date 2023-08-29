@@ -15,24 +15,21 @@ namespace Services
         }
         public async Task SaveAvatarAsync(MemoryStream file, string fileName)
         {
-            string path = Path.Combine(PATH_DIR, fileName + ".jpeg");
+            string path = Path.Combine("C:\\Users\\Artem\\Desktop\\Avatar", fileName + ".jpeg");
 
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
+                file.Seek(0, SeekOrigin.Begin);
                 await file.CopyToAsync(fileStream);
             }
         }
         public async Task<byte[]> LoadAvatarAsync(string fileName)
         {
-            string path = Path.Combine(PATH_DIR, fileName + ".jpeg");
+            string path = Path.Combine("C:\\Users\\Artem\\Desktop\\Avatar", fileName + ".jpeg");
 
-            FileStream fileStream = new FileStream(path, FileMode.Open);
-            byte[] bytes = new byte[fileStream.Length];
-            await fileStream.ReadAsync(bytes, 0, (int)fileStream.Length);
+            byte[] fileBytes = File.ReadAllBytes(path);
 
-            fileStream.DisposeAsync();
-
-            return bytes;
+            return fileBytes;
         }
     }
 }

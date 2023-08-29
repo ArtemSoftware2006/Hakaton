@@ -15,25 +15,17 @@ namespace Services.Impl
 {
     public class AvatarService : IAvatarService
     {
-        private readonly AmazonS3Config configsS3;
         private readonly AvatarProvider avatarProvider;
         private readonly ILogger<AvatarService> _logger;
         private readonly IAvatarRepository _repository;
         private readonly IMemoryCache _cache;
-        private readonly IConfiguration _config;
 
-        public AvatarService(IAvatarRepository repository, ILogger<AvatarService> logger, IMemoryCache cache, IConfiguration config)
+        public AvatarService(IAvatarRepository repository, ILogger<AvatarService> logger, IMemoryCache cache)
         {
-            _config = config;
-
             _repository = repository;
             _logger = logger;
             _cache = cache;
             avatarProvider = new AvatarProvider();
-
-             configsS3 = new  AmazonS3Config() {
-                ServiceURL="https://storage.yandexcloud.net"
-            };
         }
         public async Task<BaseResponse<bool>> Create(CreateAvatarVM model)
         {
@@ -51,8 +43,6 @@ namespace Services.Impl
 
                 await avatarProvider.SaveAvatarAsync(model.file, avatar.Key.ToString());
 
-                _logger.LogInformation("Сохранён файл " + avatar.Key.ToString());
-                
                 await _repository.Create(avatar);
 
                 _cache.Remove(model.UserId);
@@ -102,14 +92,13 @@ namespace Services.Impl
 
                 if (avatar != null)
                 {
-                    MemoryStream memStream = new MemoryStream();
-
-                    _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
-                    _logger.LogInformation("Сработала связь с облаком");
+                    var img = await avatarProvider.LoadAvatarAsync(avatar.Key.ToString());
+                    _cache.Set(id, img, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                    _logger.LogInformation("Сработало локальное хранилище фотографий");
 
                     return new BaseResponse< byte[]>()
                     {
-                        Data = await avatarProvider.LoadAvatarAsync(avatar.Key.ToString()),
+                        Data = img,
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
