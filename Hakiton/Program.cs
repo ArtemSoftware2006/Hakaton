@@ -21,7 +21,7 @@ conf_builder.SetBasePath(Directory.GetCurrentDirectory());
 conf_builder.AddJsonFile("appsettings.json");
 var config = conf_builder.Build();
 
-var connection = config.GetConnectionString("DefaultConnection");
+var connection = config["ConnectionStrings:DefaultConnection"];
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 31))));
 
