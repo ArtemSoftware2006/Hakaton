@@ -65,43 +65,6 @@ namespace Services.Impl
                     StatusCode = Domain.Enum.StatusCode.Ok,
                 };
                 
-                // using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
-                // {
-
-                //     var request = new PutObjectRequest()
-                //     {
-                //         BucketName = _config.GetSection("bucketName").Value,
-                //         Key = avatar.Key.ToString(),
-                //         InputStream = model.file,
-                //         CannedACL = S3CannedACL.PublicRead
-                //     };
-                //     var response = await client.PutObjectAsync(request);
-
-                //     _logger.LogInformation(response.HttpStatusCode.ToString());
-
-                //     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                //     {
-                //         await _repository.Create(avatar);
-
-                //         _cache.Remove(model.UserId);
-                //         _cache.Set(model.UserId, model.file.ToArray(), new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
-
-                //         return new BaseResponse<bool>() 
-                //         {
-                //             Data = true,
-                //             Description= "Ok",
-                //             StatusCode = Domain.Enum.StatusCode.Ok,
-                //         };
-                //     }
-                    
-                // }
-
-                // return new BaseResponse<bool>() 
-                // {
-                //     Data = false,
-                //     Description= "Ошибка загрузки",
-                //     StatusCode = Domain.Enum.StatusCode.NotFound,
-                // };
             }
             catch (Exception ex)
             {
@@ -150,27 +113,6 @@ namespace Services.Impl
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
-
-                    // using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
-                    // {
-                    //     GetObjectResponse response = await client.GetObjectAsync(_config.GetSection("bucketName").Value, avatar.Key.ToString());
-
-                    //     await response.ResponseStream.CopyToAsync(memStream);
-
-                    //     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                    //     {
-                    //         _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
-                    //         _logger.LogInformation("Сработала связь с облаком");
-
-                    //         return new BaseResponse< byte[]>()
-                    //         {
-                    //             Data = memStream.ToArray(),
-                    //             Description = "Ok",
-                    //             StatusCode = Domain.Enum.StatusCode.Ok,
-                    //         };
-                    //     }
-
-                    // }
                 }
 
                 return new BaseResponse< byte[]>()
