@@ -35,13 +35,11 @@ namespace Hakiton.Controllers
                     {
                         return StatusCode(400, "Вы не загрузили фото");
                     }
-
                         
                     var model = new CreateAvatarVM()
                     {
                         UserId = UserId
                     };
-
                     
                     await avatar.CopyToAsync(model.file);
 

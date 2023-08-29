@@ -8,12 +8,15 @@ using Domain.ViewModel.Avatar;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using System.Formats.Tar;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Services.Impl
 {
     public class AvatarService : IAvatarService
     {
         private readonly AmazonS3Config configsS3;
+        private readonly AvatarProvider avatarProvider;
         private readonly ILogger<AvatarService> _logger;
         private readonly IAvatarRepository _repository;
         private readonly IMemoryCache _cache;
@@ -26,6 +29,7 @@ namespace Services.Impl
             _repository = repository;
             _logger = logger;
             _cache = cache;
+            avatarProvider = new AvatarProvider();
 
              configsS3 = new  AmazonS3Config() {
                 ServiceURL="https://storage.yandexcloud.net"
@@ -44,43 +48,60 @@ namespace Services.Impl
                     Key = Guid.NewGuid(),
                     UserId = model.UserId,
                 };
+
+                await avatarProvider.SaveAvatarAsync(model.file, avatar.Key.ToString());
+
+                _logger.LogInformation("Сохранён файл " + avatar.Key.ToString());
                 
-                using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
-                {
+                await _repository.Create(avatar);
 
-                    var request = new PutObjectRequest()
-                    {
-                        BucketName = _config.GetSection("bucketName").Value,
-                        Key = avatar.Key.ToString(),
-                        InputStream = model.file,
-                        CannedACL = S3CannedACL.PublicRead
-                    };
-                    var response = await client.PutObjectAsync(request);
+                _cache.Remove(model.UserId);
+                _cache.Set(model.UserId, model.file.ToArray(), new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
 
-                    _logger.LogInformation(response.HttpStatusCode.ToString());
-
-                    if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        await _repository.Create(avatar);
-
-                        _cache.Remove(model.UserId);
-                        _cache.Set(model.UserId, model.file.ToArray(), new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
-
-                        return new BaseResponse<bool>() 
-                        {
-                            Data = true,
-                            Description= "Ok",
-                            StatusCode = Domain.Enum.StatusCode.Ok,
-                        };
-                    }
-                    
-                }
                 return new BaseResponse<bool>() 
                 {
-                    Data = false,
-                    Description= "Ошибка загрузки",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Data = true,
+                    Description= "Ok",
+                    StatusCode = Domain.Enum.StatusCode.Ok,
                 };
+                
+                // using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
+                // {
+
+                //     var request = new PutObjectRequest()
+                //     {
+                //         BucketName = _config.GetSection("bucketName").Value,
+                //         Key = avatar.Key.ToString(),
+                //         InputStream = model.file,
+                //         CannedACL = S3CannedACL.PublicRead
+                //     };
+                //     var response = await client.PutObjectAsync(request);
+
+                //     _logger.LogInformation(response.HttpStatusCode.ToString());
+
+                //     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                //     {
+                //         await _repository.Create(avatar);
+
+                //         _cache.Remove(model.UserId);
+                //         _cache.Set(model.UserId, model.file.ToArray(), new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+
+                //         return new BaseResponse<bool>() 
+                //         {
+                //             Data = true,
+                //             Description= "Ok",
+                //             StatusCode = Domain.Enum.StatusCode.Ok,
+                //         };
+                //     }
+                    
+                // }
+
+                // return new BaseResponse<bool>() 
+                // {
+                //     Data = false,
+                //     Description= "Ошибка загрузки",
+                //     StatusCode = Domain.Enum.StatusCode.NotFound,
+                // };
             }
             catch (Exception ex)
             {
@@ -120,26 +141,36 @@ namespace Services.Impl
                 {
                     MemoryStream memStream = new MemoryStream();
 
-                    using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
+                    _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                    _logger.LogInformation("Сработала связь с облаком");
+
+                    return new BaseResponse< byte[]>()
                     {
-                        GetObjectResponse response = await client.GetObjectAsync(_config.GetSection("bucketName").Value, avatar.Key.ToString());
+                        Data = await avatarProvider.LoadAvatarAsync(avatar.Key.ToString()),
+                        Description = "Ok",
+                        StatusCode = Domain.Enum.StatusCode.Ok,
+                    };
 
-                        await response.ResponseStream.CopyToAsync(memStream);
+                    // using (var client = new AmazonS3Client(_config.GetSection("accessKey").Value, _config.GetSection("secretKey").Value, configsS3))
+                    // {
+                    //     GetObjectResponse response = await client.GetObjectAsync(_config.GetSection("bucketName").Value, avatar.Key.ToString());
 
-                        if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
-                            _logger.LogInformation("Сработала связь с облаком");
+                    //     await response.ResponseStream.CopyToAsync(memStream);
 
-                            return new BaseResponse< byte[]>()
-                            {
-                                Data = memStream.ToArray(),
-                                Description = "Ok",
-                                StatusCode = Domain.Enum.StatusCode.Ok,
-                            };
-                        }
+                    //     if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                    //     {
+                    //         _cache.Set(id, memStream, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                    //         _logger.LogInformation("Сработала связь с облаком");
 
-                    }
+                    //         return new BaseResponse< byte[]>()
+                    //         {
+                    //             Data = memStream.ToArray(),
+                    //             Description = "Ok",
+                    //             StatusCode = Domain.Enum.StatusCode.Ok,
+                    //         };
+                    //     }
+
+                    // }
                 }
 
                 return new BaseResponse< byte[]>()
