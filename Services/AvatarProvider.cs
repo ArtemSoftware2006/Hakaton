@@ -4,18 +4,17 @@ namespace Services
 {
     public class AvatarProvider
     {
-        public readonly string PATH_DIR;
+        public readonly string PATH_DIR = Directory.GetCurrentDirectory() + "\\Avatars";
         public AvatarProvider()
         {
-            if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\Avatars"))
+            if (!Directory.Exists(PATH_DIR))
             {
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Avatars");
+                Directory.CreateDirectory(PATH_DIR);
             }
-            PATH_DIR = Directory.GetCurrentDirectory() + "\\Avatars";
         }
         public async Task SaveAvatarAsync(MemoryStream file, string fileName)
         {
-            string path = Path.Combine("C:\\Users\\Artem\\Desktop\\Avatar", fileName + ".jpeg");
+            string path = Path.Combine(PATH_DIR, fileName + ".jpeg");
 
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
@@ -25,7 +24,7 @@ namespace Services
         }
         public async Task<byte[]> LoadAvatarAsync(string fileName)
         {
-            string path = Path.Combine("C:\\Users\\Artem\\Desktop\\Avatar", fileName + ".jpeg");
+            string path = Path.Combine(PATH_DIR, fileName + ".jpeg");
 
             byte[] fileBytes = File.ReadAllBytes(path);
 
