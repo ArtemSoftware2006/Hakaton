@@ -25,6 +25,19 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
+        [HttpGet]
+        public async Task<IActionResult> Deals([FromQuery]int limit, int page)
+        {
+            var response = await _dealService.GetAll();
+
+            HttpContext.Response.Headers.Add("total-count", response.Data.Count.ToString());
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            {
+                return Json(response.Data.Skip((page - 1 ) * limit).Take(limit));
+            }
+            return BadRequest(response.Description);
+        }
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] DealUpdateVM model)
         {
