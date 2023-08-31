@@ -30,10 +30,10 @@ namespace Hakiton.Controllers
         {
             var response = await _dealService.GetAll();
 
-            HttpContext.Response.Headers.Add("total-count", response.Data.Count.ToString());
-
             if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
             {
+                Response.Headers.Append("x-total-count", response.Data.Count.ToString());
+                
                 return Json(response.Data.Skip((page - 1 ) * limit).Take(limit));
             }
             return BadRequest(response.Description);

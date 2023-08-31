@@ -61,12 +61,13 @@ var AllowAllOrigins = "AllowAll";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(AllowAllOrigins, builder =>
+    options.AddDefaultPolicy(builder =>
     {
         builder.WithOrigins("http://localhost:3000")
             .AllowCredentials()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .WithExposedHeaders("x-total-count");
     });
 });
 
@@ -124,7 +125,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors(AllowAllOrigins);
+app.UseCors();
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 app.UseRouting();
