@@ -42,6 +42,7 @@ namespace DAL.Repository
             _dbContext.Update(entity);
             await _dbContext.SaveChangesAsync();
 
-            return entity;        }
+            return entity;        
+        }
     }
 }
