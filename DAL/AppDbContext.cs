@@ -7,6 +7,7 @@ namespace DAL
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Comments> Comments { get; set; }
         public DbSet<Deal> Deals { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<Avatar> Avatars { get; set; }
