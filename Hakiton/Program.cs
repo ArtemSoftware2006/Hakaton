@@ -37,6 +37,8 @@ builder.Services.AddScoped<IProposalService, ProposalService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService,CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();

@@ -35,7 +35,7 @@ namespace Services.Impl
                 var comment = new Comments()
                 {
                     Text = model.Text,
-                    TimeCreated = DateTime.UtcNow,
+                    TimeCreated = DateTime.Now,
                     DealId = model.DealId,
                     UserId = model.UserId,
                 };
