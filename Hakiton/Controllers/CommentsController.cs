@@ -22,7 +22,7 @@ namespace Hakiton.Controllers
             {
                 Response.Headers.Append("x-total-count", response.Data.Count.ToString());
 
-                return Json(response.Data.Skip((page - 1) * limit).Take(limit));
+                return Json(response.Data.Take(limit * page));
             }
             return StatusCode(int.Parse(response.StatusCode.ToString()) ,response.Description);
         }
