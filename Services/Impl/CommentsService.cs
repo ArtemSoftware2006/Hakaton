@@ -114,11 +114,11 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<List<Comments>>> GetAll()
+        public async Task<BaseResponse<List<Comments>>> GetAll(int dealId)
         {
             try
             {
-                var comments =  await _commentsRepository.GetAll().ToListAsync();
+                var comments =  await _commentsRepository.GetAll().Where(x => x.DealId == dealId).ToListAsync();
                 return new BaseResponse<List<Comments>>()
                 {
                     Data = comments,

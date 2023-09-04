@@ -15,9 +15,9 @@ namespace Hakiton.Controllers
             _commentService = commentService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll(int limit, int page)
+        public async Task<IActionResult> GetAll(int limit, int page, int dealId)
         {
-            var response = await _commentService.GetAll();
+            var response = await _commentService.GetAll(dealId);
             if (response.StatusCode == Domain.Enum.StatusCode.Ok)
             {
                 Response.Headers.Append("x-total-count", response.Data.Count.ToString());

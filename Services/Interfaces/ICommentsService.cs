@@ -10,7 +10,7 @@ namespace Services.Interfaces
         Task<BaseResponse<bool>> Delete(int id);
         Task<BaseResponse<Comments>> Update(CommentsVm model);
         Task<BaseResponse<bool>> Create(CommentsVm model);
-        Task<BaseResponse<List<Comments>>> GetAll();
+        Task<BaseResponse<List<Comments>>> GetAll(int dealId);
         
     }
 }
