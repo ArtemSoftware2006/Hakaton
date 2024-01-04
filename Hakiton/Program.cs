@@ -23,7 +23,9 @@ var config = conf_builder.Build();
 
 var connection = config["ConnectionStrings:DefaultConnection"];
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 31))));
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 31)))
+);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMoneyRepository, MoneyRepository>();
@@ -35,7 +37,7 @@ builder.Services.AddScoped<IDealService, DealService>();
 builder.Services.AddScoped<IProposalRepository, ProposalRepository>();
 builder.Services.AddScoped<IProposalService, ProposalService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryService,CategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
 builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 builder.Services.AddScoped<ICommentsService, CommentsService>();
@@ -45,18 +47,21 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Hakiton",
-        Description = "API для фриланс биржи, созданной в рамках хакатона \"Code Rocks\"",
-        TermsOfService = new Uri("https://example.com/terms"),
-        Contact = new OpenApiContact
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
         {
-            Name = "Мой Telegram",
-            Url = new Uri("https://t.me/artemegorov06")
+            Version = "v1",
+            Title = "Hakiton",
+            Description = "API для фриланс биржи, созданной в рамках хакатона \"Code Rocks\"",
+            TermsOfService = new Uri("https://example.com/terms"),
+            Contact = new OpenApiContact
+            {
+                Name = "Мой Telegram",
+                Url = new Uri("https://t.me/artemegorov06")
+            }
         }
-    });
+    );
 });
 
 var AllowAllOrigins = "AllowAll";
@@ -65,7 +70,8 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder
+            .WithOrigins("http://localhost:3000")
             .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -73,46 +79,57 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+builder.Services
+    .AddAuthentication(options =>
     {
-        SaveSigninToken = false,
-        ValidateIssuer = false,
-
-        ValidateAudience = false,
-        ValidateLifetime = false,
-
-        IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
-        ValidateIssuerSigningKey = false,
-    };
-});
+        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters =
+            new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                SaveSigninToken = false,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
+                ValidateIssuerSigningKey = false,
+            };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy =>
-    {
-        policy.RequireRole("Admin");
-    });
-    options.AddPolicy("Employer", policy =>
-    {
-        policy.RequireRole("Employer");
-    }); 
-    options.AddPolicy("Creator", policy =>
-    {
-        policy.RequireRole("Creator");
-    }); 
-    options.AddPolicy("Executor", policy =>
-    {
-        policy.RequireRole("Executor");
-    });
+    options.AddPolicy(
+        "Admin",
+        policy =>
+        {
+            policy.RequireRole("Admin");
+        }
+    );
+    options.AddPolicy(
+        "Employer",
+        policy =>
+        {
+            policy.RequireRole("Employer");
+        }
+    );
+    options.AddPolicy(
+        "Creator",
+        policy =>
+        {
+            policy.RequireRole("Creator");
+        }
+    );
+    options.AddPolicy(
+        "Executor",
+        policy =>
+        {
+            policy.RequireRole("Executor");
+        }
+    );
 });
 
 var app = builder.Build();
@@ -128,10 +145,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 app.UseRouting();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
