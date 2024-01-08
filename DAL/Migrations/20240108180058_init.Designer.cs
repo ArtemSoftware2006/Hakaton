@@ -3,6 +3,7 @@ using System;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240108180058_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,7 +145,7 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entity.CommentDeals", b =>
+            modelBuilder.Entity("Domain.Entity.Comments", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,40 +172,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("DealId");
 
-                    b.ToTable("CommentDeals");
-                });
-
-            modelBuilder.Entity("Domain.Entity.CommentUsers", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("TimeCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId1")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("CommentUsers");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Domain.Entity.Deal", b =>
@@ -386,10 +356,10 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.CommentDeals", b =>
+            modelBuilder.Entity("Domain.Entity.Comments", b =>
                 {
                     b.HasOne("Domain.Entity.User", "CreatorUser")
-                        .WithMany("CommentDeals")
+                        .WithMany()
                         .HasForeignKey("CreatorUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -403,25 +373,6 @@ namespace DAL.Migrations
                     b.Navigation("CreatorUser");
 
                     b.Navigation("Deal");
-                });
-
-            modelBuilder.Entity("Domain.Entity.CommentUsers", b =>
-                {
-                    b.HasOne("Domain.Entity.User", "CreatorUser")
-                        .WithMany("CommentUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entity.Deal", b =>
@@ -468,10 +419,6 @@ namespace DAL.Migrations
             modelBuilder.Entity("Domain.Entity.User", b =>
                 {
                     b.Navigation("AcceptedDeals");
-
-                    b.Navigation("CommentDeals");
-
-                    b.Navigation("CommentUsers");
 
                     b.Navigation("CreatedDeals");
 

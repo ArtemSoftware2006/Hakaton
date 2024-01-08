@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240108140254_forPostgreSql")]
-    partial class forPostgreSql
+    [Migration("20240108180947_commentsUserAndDeal")]
+    partial class commentsUserAndDeal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,36 @@ namespace DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CategoryDeal", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DealsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CategoriesId", "DealsId");
+
+                    b.HasIndex("DealsId");
+
+                    b.ToTable("CategoryDeal");
+                });
+
+            modelBuilder.Entity("CategoryUser", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CategoriesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("CategoryUser");
+                });
 
             modelBuilder.Entity("Domain.Entity.Avatar", b =>
                 {
@@ -115,13 +145,16 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entity.Comments", b =>
+            modelBuilder.Entity("Domain.Entity.CommentDeals", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("DealId")
                         .HasColumnType("integer");
@@ -133,14 +166,11 @@ namespace DAL.Migrations
                     b.Property<DateTime>("TimeCreated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("DealId");
+                    b.HasIndex("CreatorUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DealId");
 
                     b.ToTable("Comments");
                 });
@@ -153,7 +183,7 @@ namespace DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CreatorUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DatePublication")
@@ -162,6 +192,9 @@ namespace DAL.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("ExecutorUserId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Localtion")
                         .IsRequired()
@@ -188,14 +221,11 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CreatorUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ExecutorUserId");
 
                     b.ToTable("Deals");
                 });
@@ -247,9 +277,6 @@ namespace DAL.Migrations
                     b.Property<int>("Balance")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -285,9 +312,37 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CategoryDeal", b =>
+                {
+                    b.HasOne("Domain.Entity.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Deal", null)
+                        .WithMany()
+                        .HasForeignKey("DealsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CategoryUser", b =>
+                {
+                    b.HasOne("Domain.Entity.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entity.Avatar", b =>
@@ -301,42 +356,40 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Comments", b =>
+            modelBuilder.Entity("Domain.Entity.CommentDeals", b =>
                 {
+                    b.HasOne("Domain.Entity.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entity.Deal", "Deal")
                         .WithMany()
                         .HasForeignKey("DealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("CreatorUser");
 
                     b.Navigation("Deal");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entity.Deal", b =>
                 {
-                    b.HasOne("Domain.Entity.Category", "Category")
-                        .WithMany("Deals")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("Domain.Entity.User", "CreatorUser")
+                        .WithMany("CreatedDeals")
+                        .HasForeignKey("CreatorUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entity.User", "User")
-                        .WithMany("Deals")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Domain.Entity.User", "ExecutorUser")
+                        .WithMany("AcceptedDeals")
+                        .HasForeignKey("ExecutorUserId");
 
-                    b.Navigation("Category");
+                    b.Navigation("CreatorUser");
 
-                    b.Navigation("User");
+                    b.Navigation("ExecutorUser");
                 });
 
             modelBuilder.Entity("Domain.Entity.Proposal", b =>
@@ -358,20 +411,6 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.User", b =>
-                {
-                    b.HasOne("Domain.Entity.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Category", b =>
-                {
-                    b.Navigation("Deals");
-                });
-
             modelBuilder.Entity("Domain.Entity.Deal", b =>
                 {
                     b.Navigation("Proposals");
@@ -379,7 +418,9 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entity.User", b =>
                 {
-                    b.Navigation("Deals");
+                    b.Navigation("AcceptedDeals");
+
+                    b.Navigation("CreatedDeals");
 
                     b.Navigation("Proposals");
                 });

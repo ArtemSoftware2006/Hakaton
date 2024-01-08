@@ -7,7 +7,8 @@ namespace DAL
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Comments> Comments { get; set; }
+        public DbSet<CommentDeals> CommentDeals { get; set; }
+        public DbSet<CommentUsers> CommentUsers { get; set; }
         public DbSet<Deal> Deals { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<Avatar> Avatars { get; set; }
@@ -17,6 +18,25 @@ namespace DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Deal>()
+                .HasOne(x => x.CreatorUser)
+                .WithMany(x => x.CreatedDeals)
+                .HasForeignKey(x => x.CreatorUserId);
+            modelBuilder.Entity<Deal>()
+                .HasOne(x => x.ExecutorUser)
+                .WithMany(x => x.AcceptedDeals)
+                .HasForeignKey(x => x.ExecutorUserId);
+
+            modelBuilder.Entity<CommentUsers>()
+                .HasOne(x => x.CreatorUser)
+                .WithMany(x => x.CommentUsers)
+                .HasForeignKey(x => x.UserId);
+
+            modelBuilder.Entity<CommentDeals>()
+                .HasOne(x => x.CreatorUser)
+                .WithMany(x => x.CommentDeals)
+                .HasForeignKey(x => x.CreatorUserId);
+            
             modelBuilder
                 .Entity<Category>()
                 .HasData(

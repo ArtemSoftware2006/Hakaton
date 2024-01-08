@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class forPostgreSql : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,17 +43,11 @@ namespace DAL.Migrations
                     IsVIP = table.Column<bool>(type: "boolean", nullable: false),
                     Balance = table.Column<int>(type: "integer", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CategoryId = table.Column<int>(type: "integer", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -77,6 +71,30 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryUser",
+                columns: table => new
+                {
+                    CategoriesId = table.Column<int>(type: "integer", nullable: false),
+                    UsersId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryUser", x => new { x.CategoriesId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_CategoryUser_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryUser_Users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Deals",
                 columns: table => new
                 {
@@ -91,22 +109,45 @@ namespace DAL.Migrations
                     StopDate = table.Column<string>(type: "text", nullable: false),
                     Localtion = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    CreatorUserId = table.Column<int>(type: "integer", nullable: false),
+                    ExecutorUserId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Deals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Deals_Categories_CategoryId",
-                        column: x => x.CategoryId,
+                        name: "FK_Deals_Users_CreatorUserId",
+                        column: x => x.CreatorUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Deals_Users_ExecutorUserId",
+                        column: x => x.ExecutorUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryDeal",
+                columns: table => new
+                {
+                    CategoriesId = table.Column<int>(type: "integer", nullable: false),
+                    DealsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryDeal", x => new { x.CategoriesId, x.DealsId });
+                    table.ForeignKey(
+                        name: "FK_CategoryDeal_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Deals_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_CategoryDeal_Deals_DealsId",
+                        column: x => x.DealsId,
+                        principalTable: "Deals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -119,7 +160,7 @@ namespace DAL.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Text = table.Column<string>(type: "text", nullable: false),
                     TimeCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    CreatorUserId = table.Column<int>(type: "integer", nullable: false),
                     DealId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -132,8 +173,8 @@ namespace DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Comments_Users_CreatorUserId",
+                        column: x => x.CreatorUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -192,24 +233,34 @@ namespace DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryDeal_DealsId",
+                table: "CategoryDeal",
+                column: "DealsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryUser_UsersId",
+                table: "CategoryUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_CreatorUserId",
+                table: "Comments",
+                column: "CreatorUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_DealId",
                 table: "Comments",
                 column: "DealId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "UserId");
+                name: "IX_Deals_CreatorUserId",
+                table: "Deals",
+                column: "CreatorUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deals_CategoryId",
+                name: "IX_Deals_ExecutorUserId",
                 table: "Deals",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Deals_UserId",
-                table: "Deals",
-                column: "UserId");
+                column: "ExecutorUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proposals_DealId",
@@ -220,11 +271,6 @@ namespace DAL.Migrations
                 name: "IX_Proposals_UserId",
                 table: "Proposals",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_CategoryId",
-                table: "Users",
-                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -234,19 +280,25 @@ namespace DAL.Migrations
                 name: "Avatars");
 
             migrationBuilder.DropTable(
+                name: "CategoryDeal");
+
+            migrationBuilder.DropTable(
+                name: "CategoryUser");
+
+            migrationBuilder.DropTable(
                 name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Proposals");
 
             migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
                 name: "Deals");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
         }
     }
 }
