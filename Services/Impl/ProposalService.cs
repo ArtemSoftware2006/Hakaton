@@ -267,7 +267,7 @@ namespace Services.Impl
                 _logger.LogInformation($"Id пользователя = {id}");
                 var userDeals = _dealRepository
                     .GetAll()
-                    .Where(x => x.UserId == id)
+                    .Where(x => x.CreatorUserId == id)
                     .Select(x => x.Id);
                 _logger.LogInformation($"Количество Заказов = {userDeals.Count()}");
                 var proposals = _proposalRepository

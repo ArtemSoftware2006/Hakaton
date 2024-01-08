@@ -31,12 +31,12 @@ namespace Services.Impl
                     };
                 }
 
-                var comment = new Comments()
+                var comment = new CommentDeals()
                 {
                     Text = model.Text,
                     TimeCreated = DateTime.Now,
                     DealId = model.DealId,
-                    UserId = model.UserId,
+                    CreatorUserId = model.UserId,
                 };
 
                 bool result = await _commentsRepository.Create(comment);
@@ -77,14 +77,14 @@ namespace Services.Impl
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<Comments>> Get(int id)
+        public async Task<BaseResponse<CommentDeals>> Get(int id)
         {
             try
             {
                 var comment = await _commentsRepository.Get(id);
                 if (comment == null)
                 {
-                    return new BaseResponse<Comments>()
+                    return new BaseResponse<CommentDeals>()
                     {
                         Description = "Коммент с id " + id + " не найден",
                         StatusCode = Domain.Enum.StatusCode.NotFound,
@@ -92,7 +92,7 @@ namespace Services.Impl
                     };
                 }
 
-                return new BaseResponse<Comments>()
+                return new BaseResponse<CommentDeals>()
                 {
                     Description = "Ok",
                     StatusCode = Domain.Enum.StatusCode.Ok,
@@ -105,7 +105,7 @@ namespace Services.Impl
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
 
-                return new BaseResponse<Comments>()
+                return new BaseResponse<CommentDeals>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError
@@ -113,12 +113,12 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<List<Comments>>> GetAll(int dealId)
+        public async Task<BaseResponse<List<CommentDeals>>> GetAll(int dealId)
         {
             try
             {
                 var comments =  await _commentsRepository.GetAll().Where(x => x.DealId == dealId).ToListAsync();
-                return new BaseResponse<List<Comments>>()
+                return new BaseResponse<List<CommentDeals>>()
                 {
                     Data = comments,
                     Description = "Ok",
@@ -130,7 +130,7 @@ namespace Services.Impl
                 _logger.LogError("Ошибка в Сервисе Комментарией " + typeof(CommentsService).Name);
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
-                return new BaseResponse<List<Comments>>()
+                return new BaseResponse<List<CommentDeals>>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError
@@ -138,7 +138,7 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<Comments>> Update(CommentsVm model)
+        public Task<BaseResponse<CommentDeals>> Update(CommentsVm model)
         {
             throw new NotImplementedException();
         }

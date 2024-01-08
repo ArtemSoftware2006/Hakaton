@@ -16,9 +16,11 @@ namespace Domain.Entity
         public int Balance { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Description { get; set; }
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
-        public ICollection<Proposal> Proposals { get; set; }
-        public ICollection<Deal> Deals { get; set; }
+        public List<CommentUsers> CommentUsers { get; set; }
+        public List<CommentDeals> CommentDeals { get; set; }
+        public List<Category> Categories { get; set; }
+        public List<Proposal> Proposals { get; set; }
+        public List<Deal> CreatedDeals { get; set; }
+        public List<Deal> AcceptedDeals { get; set; }
     }
 }

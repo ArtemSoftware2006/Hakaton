@@ -64,7 +64,7 @@ namespace Services.Impl
         {
             try
             {
-                var deals = _dealRepository.GetAll().Where(x => x.UserId == EmployerId
+                var deals = _dealRepository.GetAll().Where(x => x.CreatorUserId == EmployerId
                     && x.Status == Domain.Enum.StatusDeal.InProcess).ToList();
 
                 if (deals.Count != 0)

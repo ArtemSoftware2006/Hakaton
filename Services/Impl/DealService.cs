@@ -29,10 +29,9 @@ namespace Services.Impl
                     StopDate = model.StopDate,
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
-                    CategoryId = model.CategoryId,
                     Status = Domain.Enum.StatusDeal.Published,
                     Localtion = model.location,
-                    UserId = model.UserId,
+                    CreatorUserId = model.UserId,
                 };
 
                 await _dealRepository.Create(deal);
@@ -162,40 +161,41 @@ namespace Services.Impl
 
         public async Task<BaseResponse<List<Deal>>> GetByCetegory(int id)
         {
-            try
-            {
-                var deals = _dealRepository.GetAll().Where(x => x.CategoryId == id).ToList();
-                if (deals.Count != 0)
-                {
-                    return new BaseResponse<List<Deal>>()
-                    {
-                        Data = deals,
-                        Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
-                    };
-                }
-                return new BaseResponse<List<Deal>>()
-                {
-                    Data = deals,
-                    Description = $"Нет заказов с категорией с id={id}",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<List<Deal>>()
-                {
-                    Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
-                };
-            }
+            throw new NotImplementedException();
+            // try
+            // {
+            //     var deals = _dealRepository.GetAll().Where(x => x.CategoryId == id).ToList();
+            //     if (deals.Count != 0)
+            //     {
+            //         return new BaseResponse<List<Deal>>()
+            //         {
+            //             Data = deals,
+            //             Description = "Ok",
+            //             StatusCode = Domain.Enum.StatusCode.Ok,
+            //         };
+            //     }
+            //     return new BaseResponse<List<Deal>>()
+            //     {
+            //         Data = deals,
+            //         Description = $"Нет заказов с категорией с id={id}",
+            //         StatusCode = Domain.Enum.StatusCode.NotFound,
+            //     };
+            // }
+            // catch (Exception ex)
+            // {
+            //     return new BaseResponse<List<Deal>>()
+            //     {
+            //         Description = ex.Message,
+            //         StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+            //     };
+            // }
         }
 
         public async Task<BaseResponse<List<Deal>>> GetByUserId(int id)
         {
             try
             {
-                var deals = _dealRepository.GetAll().Where(x => x.UserId == id).ToList();
+                var deals = _dealRepository.GetAll().Where(x => x.CreatorUserId == id).ToList();
                 if (deals.Count != 0)
                 {
                     return new BaseResponse<List<Deal>>()
@@ -239,7 +239,6 @@ namespace Services.Impl
                     deal.StopDate = model.StopDate ?? deal.StopDate;
                     deal.Description = model.Description ?? deal.Description;
                     deal.Title = model.Title ?? deal.Title;
-                    deal.CategoryId = model.CategoryId ?? deal.CategoryId;
                     deal.Localtion = model.location ?? deal.Localtion;
 
                     await _dealRepository.Update(deal);

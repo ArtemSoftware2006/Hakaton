@@ -70,7 +70,6 @@ namespace Service.Impl
                     .FirstOrDefaultAsync(x => x.Id == model.UserId);
                 if (user != null)
                 {
-                    user.CategoryId = model.CategoryId;
                     await _userRepository.Update(user);
 
                     return new BaseResponse<bool>()
@@ -267,7 +266,6 @@ namespace Service.Impl
                     user.FirstName = model.FirstName ?? user.FirstName;
                     user.LastName = model.LastName ?? user.LastName;
                     user.SecondName = model.SecondName ?? user.SecondName;
-                    user.CategoryId = model.CategoryId ?? user.CategoryId;
                     user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
                     user.Description = model.Description ?? user.Description;
 

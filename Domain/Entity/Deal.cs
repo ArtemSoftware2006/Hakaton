@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Enum;
 
 namespace Domain.Entity
 {
@@ -14,10 +15,11 @@ namespace Domain.Entity
         public string StopDate { get; set; }
         public string Localtion { get; set; }
         public StatusDeal Status { get; set; }
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
-        public ICollection<Proposal> Proposals { get; set; }
+        public List<Category> Categories { get; set; }
+        public int CreatorUserId { get; set; }
+        public User CreatorUser { get; set; }
+        public int? ExecutorUserId { get; set; }
+        public User? ExecutorUser { get; set; }
+        public List<Proposal> Proposals { get; set; }
     }
 }
