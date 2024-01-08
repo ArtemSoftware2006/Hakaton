@@ -1,4 +1,5 @@
 ﻿using Domain.ViewModel.Proposal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Interfaces;
@@ -15,64 +16,81 @@ namespace Hakiton.Controllers
         {
             _proposalService = proposalService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllPoroposals()
         {
             var response = await _proposalService.GetAll();
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            if (
+                response.StatusCode == Domain.Enum.StatusCode.Ok
+                || response.StatusCode == Domain.Enum.StatusCode.NotFound
+            )
             {
-                return StatusCode(200,response.Data);
+                return StatusCode(200, response.Data);
             }
             return BadRequest(response.Description);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetByUserId(int UserId)
         {
             var response = await _proposalService.GetByUserId(UserId);
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok ||response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            if (
+                response.StatusCode == Domain.Enum.StatusCode.Ok
+                || response.StatusCode == Domain.Enum.StatusCode.NotFound
+            )
             {
-                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-                return Ok(json);            }
+                string json = JsonConvert.SerializeObject(
+                    response.Data,
+                    new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }
+                );
+                return Ok(json);
+            }
             return BadRequest(response.Description);
         }
+
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] ProposalCreateVM model)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated)
+                var response = await _proposalService.Create(model);
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    var response = await _proposalService.Create(model);
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                    {
-                        return Ok();
-                    }
-                    if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
-                    {
-                        return StatusCode(400, response.Description);
-                    }
-                    return StatusCode(500, response.Description);
+                    return Ok();
                 }
-                return StatusCode(403);
+                if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                {
+                    return StatusCode(400, response.Description);
+                }
+                return StatusCode(500, response.Description);
             }
             return BadRequest("Ошибка");
         }
+
         [HttpGet]
         public async Task<IActionResult> GetByDealId(int id)
         {
             var response = await _proposalService.GetByDealId(id);
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            if (
+                response.StatusCode == Domain.Enum.StatusCode.Ok
+                || response.StatusCode == Domain.Enum.StatusCode.NotFound
+            )
             {
-                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                string json = JsonConvert.SerializeObject(
+                    response.Data,
+                    new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }
+                );
                 return Ok(json);
             }
             return BadRequest(response.Description);
@@ -83,73 +101,70 @@ namespace Hakiton.Controllers
         {
             var response = await _proposalService.GetAllByUserDeals(id);
 
-            if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+            if (
+                response.StatusCode == Domain.Enum.StatusCode.Ok
+                || response.StatusCode == Domain.Enum.StatusCode.NotFound
+            )
             {
-                string json = JsonConvert.SerializeObject(response.Data,new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                string json = JsonConvert.SerializeObject(
+                    response.Data,
+                    new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }
+                );
                 return Ok(json);
             }
             return BadRequest(response.Description);
         }
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get(int id)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated)
+                var response = await _proposalService.Get(id);
+
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    var response = await _proposalService.Get(id);
-
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                    {
-                        return Json(response.Data);
-                    }
-                    return StatusCode(400,response.Description);
+                    return Json(response.Data);
                 }
-
-                return StatusCode(403);
+                return StatusCode(400, response.Description);
             }
             return BadRequest("Модель не валидна");
         }
+
         [HttpPatch]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] ProposalUpdateVM model)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated)
-                {
-                    var response = await _proposalService.Update(model);
+                var response = await _proposalService.Update(model);
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                    {
-                        return Ok();
-                    }
-                    if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
-                    {
-                        return StatusCode(400, response.Description);
-                    }
-                    return StatusCode(500, response.Description);
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                {
+                    return Ok();
                 }
-                return StatusCode(403);
+                if (response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                {
+                    return StatusCode(400, response.Description);
+                }
+                return StatusCode(500, response.Description);
             }
             return BadRequest("Ошибка");
         }
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             if (ModelState.IsValid)
             {
-                if (HttpContext.User.Identity.IsAuthenticated)
-                {
-                    var response = _proposalService.Delete(id);
-                    return Ok();
-                }
-                return StatusCode(403);
+                var response = await _proposalService.Delete(id);
+                return Ok(response.Data);
             }
             return BadRequest("Модель не валидна");
         }
-
     }
 }

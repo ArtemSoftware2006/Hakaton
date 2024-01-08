@@ -1,10 +1,8 @@
 ﻿using Domain.ViewModel.Photo;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using Amazon.S3;
-using Amazon.S3.Model;
 using Domain.ViewModel.Avatar;
 using Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Hakiton.Controllers
 {
@@ -16,71 +14,61 @@ namespace Hakiton.Controllers
 
         private readonly IAvatarService _service;
 
-        public PhotoController(ILogger<PhotoController> logger,IAvatarService service)
+        public PhotoController(ILogger<PhotoController> logger, IAvatarService service)
         {
             _service = service;
             _logger = logger;
-    
         }
+
         [HttpPost]
-        public async Task<IActionResult> UploadAvatar(int UserId,[FromForm]IFormFile avatar)
+        [Authorize]
+        public async Task<IActionResult> UploadAvatar(int UserId, [FromForm] IFormFile avatar)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-
-                if (HttpContext.User.Identity.IsAuthenticated)
+                if (avatar == null)
                 {
-
-                    if (avatar == null)
-                    {
-                        return StatusCode(400, "Вы не загрузили фото");
-                    }
-                        
-                    var model = new CreateAvatarVM()
-                    {
-                        UserId = UserId
-                    };
-                    
-                    await avatar.CopyToAsync(model.file);
-
-                    var response = await _service.Create(model);
-
-                    _logger.LogInformation(response.Description);
-
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                    {
-                        return Ok();
-                    }
-
-                    return StatusCode(400, response.Data);                       
+                    return StatusCode(400, "Вы не загрузили фото");
                 }
-                return StatusCode(403);
+
+                var model = new CreateAvatarVM() { UserId = UserId };
+
+                await avatar.CopyToAsync(model.file);
+
+                var response = await _service.Create(model);
+
+                _logger.LogInformation(response.Description);
+
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+                {
+                    return Ok();
+                }
+
+                return StatusCode(400, response.Data);
             }
             return BadRequest("Модель не валидна");
         }
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> LoadAvatar(int UserId)
         {
             if (ModelState.IsValid)
             {
+                var response = await _service.Get(UserId);
 
-                if (HttpContext.User.Identity.IsAuthenticated)
+                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
-                    var response = await _service.Get(UserId);
+                    _logger.LogInformation($"Response : {response.Data.Length}");
 
-                    if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                    {
-                        _logger.LogInformation($"Response : {response.Data.Length}");
-
-                        return File(response.Data.ToArray(),"image/jpeg");
-                    }
-
-                    return StatusCode(400, "У вас нет фотографии");
+                    return File(response.Data.ToArray(), "image/jpeg");
                 }
-                return StatusCode(403);
+
+                return StatusCode(400, "У вас нет фотографии");
             }
             return BadRequest("Модель не валидна");
         }
+
         [HttpGet]
         public async Task<IActionResult> LoadAllAvatar()
         {
@@ -89,14 +77,19 @@ namespace Hakiton.Controllers
                 var files = new List<AvatarVM>();
                 DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory + "/Avatars");
 
-                foreach(var item in dir.GetFiles())
+                foreach (var item in dir.GetFiles())
                 {
-                    files.Add(new AvatarVM { Path = item.FullName, UserId = int.Parse(Path.GetFileNameWithoutExtension(item.Name)) });
+                    files.Add(
+                        new AvatarVM
+                        {
+                            Path = item.FullName,
+                            UserId = int.Parse(Path.GetFileNameWithoutExtension(item.Name))
+                        }
+                    );
                 }
                 return Json(files);
             }
             return BadRequest("Модель не валидна");
         }
-
     }
 }

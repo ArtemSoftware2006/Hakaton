@@ -10,10 +10,12 @@ namespace Hakiton.Controllers
     public class CommentsController : Controller
     {
         private readonly ICommentsService _commentService;
+
         public CommentsController(ICommentsService commentService)
         {
             _commentService = commentService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll(int limit, int page, int dealId)
         {
@@ -24,8 +26,9 @@ namespace Hakiton.Controllers
 
                 return Json(response.Data.Take(limit * page));
             }
-            return StatusCode(int.Parse(response.StatusCode.ToString()) ,response.Description);
+            return StatusCode(int.Parse(response.StatusCode.ToString()), response.Description);
         }
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -36,6 +39,7 @@ namespace Hakiton.Controllers
             }
             return BadRequest(response.Description);
         }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CommentsVm model)
@@ -48,5 +52,4 @@ namespace Hakiton.Controllers
             return NotFound(response.Description);
         }
     }
-
 }

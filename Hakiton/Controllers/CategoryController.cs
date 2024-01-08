@@ -14,12 +14,14 @@ namespace Hakiton.Controllers
         {
             _categoryService = categoryService;
         }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> TestAuth()
         {
-            return StatusCode(200,"Вы авторизованы");
+            return Ok("Вы авторизованы");
         }
+
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
@@ -27,7 +29,10 @@ namespace Hakiton.Controllers
             {
                 var response = await _categoryService.GetAll();
 
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok || response.StatusCode == Domain.Enum.StatusCode.NotFound)
+                if (
+                    response.StatusCode == Domain.Enum.StatusCode.Ok
+                    || response.StatusCode == Domain.Enum.StatusCode.NotFound
+                )
                 {
                     return Json(response.Data.ToList());
                 }
@@ -35,6 +40,5 @@ namespace Hakiton.Controllers
             }
             return BadRequest("ModelState is not valid");
         }
-
     }
 }
