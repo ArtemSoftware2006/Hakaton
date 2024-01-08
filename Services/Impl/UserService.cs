@@ -60,11 +60,14 @@ namespace Service.Impl
         {
             throw new NotImplementedException();
         }
+
         public async Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model)
         {
             try
             {
-                var user =  await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == model.UserId);   
+                var user = await _userRepository
+                    .GetAll()
+                    .FirstOrDefaultAsync(x => x.Id == model.UserId);
                 if (user != null)
                 {
                     user.CategoryId = model.CategoryId;
@@ -93,16 +96,18 @@ namespace Service.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<User>> Registr(UserRegistrVM model)
         {
             try
             {
-                Domain.Entity.User user = _userRepository.GetAll().FirstOrDefault(x => x.Email == model.Email 
-                    || x.Login == model.Login);
+                User user = _userRepository
+                    .GetAll()
+                    .FirstOrDefault(x => x.Email == model.Email || x.Login == model.Login);
 
                 if (user == null)
                 {
-                    user = new Domain.Entity.User()
+                    user = new User()
                     {
                         Email = model.Email,
                         Login = model.Login,
@@ -139,11 +144,18 @@ namespace Service.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<User>> Login(UserLoginVM model)
         {
             try
             {
-                var user = _userRepository.GetAll().FirstOrDefault(x => x.Login == model.Login && x.Password == HashPasswordHelper.HashPassword(model.Password));
+                var user = _userRepository
+                    .GetAll()
+                    .FirstOrDefault(
+                        x =>
+                            x.Login == model.Login
+                            && x.Password == HashPasswordHelper.HashPassword(model.Password)
+                    );
 
                 if (user != null)
                 {
@@ -169,6 +181,7 @@ namespace Service.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<List<User>>> GetAllUsers()
         {
             try
@@ -190,12 +203,12 @@ namespace Service.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<bool>> VIP(int id)
         {
             try
             {
                 var user = await _userRepository.Get(id);
-
 
                 if (user != null)
                 {
@@ -220,9 +233,9 @@ namespace Service.Impl
                             Description = "Ok",
                         };
                     }
-                    return new BaseResponse<bool>() 
+                    return new BaseResponse<bool>()
                     {
-                         Data = false,
+                        Data = false,
                         StatusCode = StatusCode.NotFound,
                         Description = "Ошибка транзакции средств с счёта пользователя.",
                     };
@@ -243,6 +256,7 @@ namespace Service.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<bool>> Update(UserUpdateVM model)
         {
             try
@@ -250,7 +264,6 @@ namespace Service.Impl
                 var user = await _userRepository.Get(model.Id);
                 if (user != null)
                 {
-
                     user.FirstName = model.FirstName ?? user.FirstName;
                     user.LastName = model.LastName ?? user.LastName;
                     user.SecondName = model.SecondName ?? user.SecondName;
@@ -273,7 +286,6 @@ namespace Service.Impl
                     Description = $"нет пользователя с id = {model.Id}",
                     StatusCode = StatusCode.NotFound,
                 };
-
             }
             catch (Exception ex)
             {

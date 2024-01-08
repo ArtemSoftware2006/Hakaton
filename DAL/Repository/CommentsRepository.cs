@@ -7,10 +7,12 @@ namespace DAL.Repository
     public class CommentsRepository : ICommentsRepository
     {
         private readonly AppDbContext _dbContext;
+
         public CommentsRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+
         public async Task<bool> Create(Comments entity)
         {
             await _dbContext.AddAsync(entity);

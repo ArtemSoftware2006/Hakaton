@@ -1,5 +1,4 @@
 using DAL.Interfaces;
-using Domain.Entity;
 
 namespace DAL.Repository
 {
@@ -22,7 +21,7 @@ namespace DAL.Repository
                     if (user != null)
                     {
                         user.Balance += money;
-                         var result = await _context.SaveChangesAsync() > 0;
+                        var result = await _context.SaveChangesAsync() > 0;
                         transaction.Commit();
                         return result;
                     }
@@ -31,15 +30,15 @@ namespace DAL.Repository
                 }
                 catch (System.Exception)
                 {
-                   transaction.Rollback();
-                   return false;
+                    transaction.Rollback();
+                    return false;
                 }
             }
         }
 
         public async Task<bool> WithdrawMoney(int userId, int money)
         {
-             using (var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
@@ -56,8 +55,8 @@ namespace DAL.Repository
                 }
                 catch (System.Exception)
                 {
-                   transaction.Rollback();
-                   return false;
+                    transaction.Rollback();
+                    return false;
                 }
             }
         }

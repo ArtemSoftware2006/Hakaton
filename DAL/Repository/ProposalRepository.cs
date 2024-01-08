@@ -12,6 +12,7 @@ namespace DAL.Repository
         {
             _dbContext = dbContext;
         }
+
         public async Task<bool> Create(Proposal entity)
         {
             await _dbContext.AddAsync(entity);

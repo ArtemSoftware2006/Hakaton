@@ -2,9 +2,9 @@ using DAL;
 using DAL.Interfaces;
 using DAL.Repository;
 using Hakiton;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Service.Impl;
 using Service.Interfaces;
@@ -12,8 +12,6 @@ using Services.Impl;
 using Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 var conf_builder = new ConfigurationBuilder();
 
@@ -64,8 +62,6 @@ builder.Services.AddSwaggerGen(options =>
     );
 });
 
-var AllowAllOrigins = "AllowAll";
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
@@ -80,24 +76,20 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters =
-            new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
-                SaveSigninToken = false,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
-                ValidateIssuerSigningKey = false,
-            };
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = AuthTokenOptions.ISSUER,
+            ValidateAudience = true,
+            ValidAudience = AuthTokenOptions.AUDIENCE,
+            IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+        };
     });
 
 builder.Services.AddAuthorization(options =>
@@ -110,24 +102,10 @@ builder.Services.AddAuthorization(options =>
         }
     );
     options.AddPolicy(
-        "Employer",
+        "User",
         policy =>
         {
-            policy.RequireRole("Employer");
-        }
-    );
-    options.AddPolicy(
-        "Creator",
-        policy =>
-        {
-            policy.RequireRole("Creator");
-        }
-    );
-    options.AddPolicy(
-        "Executor",
-        policy =>
-        {
-            policy.RequireRole("Executor");
+            policy.RequireRole("User");
         }
     );
 });
@@ -148,7 +126,8 @@ app.UseCors();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
-app.UseRouting();
+
+// app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

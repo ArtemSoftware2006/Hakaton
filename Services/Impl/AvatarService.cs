@@ -2,14 +2,10 @@ using DAL.Interfaces;
 using Domain.Entity;
 using Domain.Response;
 using Services.Interfaces;
-using Amazon.S3;
-using Amazon.S3.Model;
 using Domain.ViewModel.Avatar;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
-using System.Formats.Tar;
-using Microsoft.AspNetCore.Hosting;
+
 
 namespace Services.Impl
 {

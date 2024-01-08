@@ -10,11 +10,13 @@ namespace Services.Impl
     public class DealService : IDealService
     {
         public IDealRepository _dealRepository { get; set; }
+
         public DealService(IDealRepository dealRepository, IUserRepository userRepository)
         {
             _dealRepository = dealRepository;
         }
-        public async Task<BaseResponse<bool>> Create( DealCreateVM model)
+
+        public async Task<BaseResponse<bool>> Create(DealCreateVM model)
         {
             try
             {
@@ -35,10 +37,10 @@ namespace Services.Impl
 
                 await _dealRepository.Create(deal);
 
-                return new BaseResponse<bool>() 
+                return new BaseResponse<bool>()
                 {
                     Data = true,
-                    Description= "Ok",
+                    Description = "Ok",
                     StatusCode = Domain.Enum.StatusCode.Ok,
                 };
             }
@@ -52,6 +54,7 @@ namespace Services.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<bool>> Delete(int id)
         {
             try
@@ -122,7 +125,10 @@ namespace Services.Impl
         {
             try
             {
-                var deals = _dealRepository.GetAll().Where(x => x.Status == Domain.Enum.StatusDeal.Published).ToList();
+                var deals = _dealRepository
+                    .GetAll()
+                    .Where(x => x.Status == Domain.Enum.StatusDeal.Published)
+                    .ToList();
                 if (deals.Count != 0)
                 {
                     return new BaseResponse<List<Deal>>()
@@ -184,6 +190,7 @@ namespace Services.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<List<Deal>>> GetByUserId(int id)
         {
             try
@@ -214,11 +221,16 @@ namespace Services.Impl
                 };
             }
         }
+
         public async Task<BaseResponse<Deal>> Update(DealUpdateVM model)
         {
             try
             {
-                var deal = await _dealRepository.GetAll().FirstOrDefaultAsync(x=> x.Id == model.Id && x.Status == Domain.Enum.StatusDeal.Published);
+                var deal = await _dealRepository
+                    .GetAll()
+                    .FirstOrDefaultAsync(
+                        x => x.Id == model.Id && x.Status == Domain.Enum.StatusDeal.Published
+                    );
                 if (deal != null)
                 {
                     deal.MaxPrice = model.MaxPrice ?? deal.MaxPrice;

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
 
 namespace Services
 {

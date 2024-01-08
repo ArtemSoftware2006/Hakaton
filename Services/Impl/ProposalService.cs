@@ -11,10 +11,13 @@ namespace Services.Impl
     {
         public IProposalRepository _proposalRepository { get; set; }
         public IDealRepository _dealRepository { get; set; }
-        private readonly ILogger<ProposalService> _logger; 
+        private readonly ILogger<ProposalService> _logger;
 
-
-        public ProposalService(IProposalRepository propposalRepository, IDealRepository dealRepository, ILogger<ProposalService> logger)
+        public ProposalService(
+            IProposalRepository propposalRepository,
+            IDealRepository dealRepository,
+            ILogger<ProposalService> logger
+        )
         {
             _proposalRepository = propposalRepository;
             _dealRepository = dealRepository;
@@ -25,7 +28,10 @@ namespace Services.Impl
         {
             try
             {
-                var proposal = _proposalRepository.GetAll().Where(x => x.DealId == model.DealId && x.UserId == model.UserId).FirstOrDefault();
+                var proposal = _proposalRepository
+                    .GetAll()
+                    .Where(x => x.DealId == model.DealId && x.UserId == model.UserId)
+                    .FirstOrDefault();
                 if (proposal == null)
                 {
                     proposal = new Proposal()
@@ -45,7 +51,7 @@ namespace Services.Impl
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
                 }
-                
+
                 return new BaseResponse<bool>()
                 {
                     Data = false,
@@ -139,12 +145,12 @@ namespace Services.Impl
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
                 }
-                return new BaseResponse<List<Proposal>> 
-                { 
-                    Data = proposals, 
+                return new BaseResponse<List<Proposal>>
+                {
+                    Data = proposals,
                     StatusCode = Domain.Enum.StatusCode.NotFound,
                     Description = "нет заявок",
-                };  
+                };
             }
             catch (Exception ex)
             {
@@ -164,7 +170,7 @@ namespace Services.Impl
                 if (proposals.Count != 0)
                 {
                     return new BaseResponse<List<Proposal>>()
-                    { 
+                    {
                         Data = proposals,
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok
@@ -259,14 +265,20 @@ namespace Services.Impl
             try
             {
                 _logger.LogInformation($"Id пользователя = {id}");
-                var userDeals = _dealRepository.GetAll().Where(x => x.UserId == id).Select(x => x.Id);
+                var userDeals = _dealRepository
+                    .GetAll()
+                    .Where(x => x.UserId == id)
+                    .Select(x => x.Id);
                 _logger.LogInformation($"Количество Заказов = {userDeals.Count()}");
-                var proposals = _proposalRepository.GetAll().Where(x => userDeals.Contains(x.DealId)).ToList();
+                var proposals = _proposalRepository
+                    .GetAll()
+                    .Where(x => userDeals.Contains(x.DealId))
+                    .ToList();
 
                 if (proposals.Count() != 0)
                 {
                     return new BaseResponse<List<Proposal>>()
-                    { 
+                    {
                         Data = proposals,
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok
@@ -286,6 +298,7 @@ namespace Services.Impl
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,
                 };
-            }        }
+            }
+        }
     }
 }

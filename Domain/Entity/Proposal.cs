@@ -8,7 +8,7 @@ namespace Domain.Entity
         public string Descripton { get; set; }
         public int Price { get; set; }
         public DateTime DatePublish { get; set; }
-        public StatusDeal Status{ get; set; }
+        public StatusDeal Status { get; set; }
         public int DealId { get; set; }
         public Deal Deal { get; set; }
         public int UserId { get; set; }

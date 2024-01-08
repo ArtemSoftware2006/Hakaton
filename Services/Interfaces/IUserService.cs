@@ -15,6 +15,5 @@ namespace Service.Interfaces
         Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model);
         Task<BaseResponse<User>> Registr(UserRegistrVM model);
         Task<BaseResponse<User>> Login(UserLoginVM model);
-            
     }
 }

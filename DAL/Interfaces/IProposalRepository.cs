@@ -2,7 +2,5 @@
 
 namespace DAL.Interfaces
 {
-    public interface IProposalRepository : IBaseRepository<Proposal>
-    {
-    }
+    public interface IProposalRepository : IBaseRepository<Proposal> { }
 }

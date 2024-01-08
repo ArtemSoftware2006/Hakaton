@@ -11,9 +11,10 @@ namespace DAL.Repository
         {
             _dbContext = dbContext;
         }
+
         public async Task<bool> Create(Deal entity)
         {
-            await _dbContext.AddAsync(entity); 
+            await _dbContext.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
 
             return true;

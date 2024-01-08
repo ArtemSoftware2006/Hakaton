@@ -7,10 +7,12 @@ namespace DAL.Repository
     public class AvatarRepository : IAvatarRepository
     {
         private readonly AppDbContext _dbContext;
+
         public AvatarRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+
         public async Task<bool> Create(Avatar entity)
         {
             await _dbContext.AddAsync(entity);
@@ -21,7 +23,7 @@ namespace DAL.Repository
 
         public async Task<bool> Delete(Avatar entity)
         {
-             _dbContext.Remove(entity);
+            _dbContext.Remove(entity);
             await _dbContext.SaveChangesAsync();
 
             return true;
@@ -29,7 +31,7 @@ namespace DAL.Repository
 
         public async Task<Avatar> Get(int UserId)
         {
-            return await _dbContext.Avatars.FirstOrDefaultAsync(x=>x.UserId == UserId);
+            return await _dbContext.Avatars.FirstOrDefaultAsync(x => x.UserId == UserId);
         }
 
         public IQueryable<Avatar> GetAll()
@@ -42,7 +44,7 @@ namespace DAL.Repository
             _dbContext.Update(entity);
             await _dbContext.SaveChangesAsync();
 
-            return entity;        
+            return entity;
         }
     }
 }

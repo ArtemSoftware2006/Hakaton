@@ -12,6 +12,7 @@ namespace DAL.Repository
         {
             _dbContext = dbContext;
         }
+
         public async Task<bool> Create(Category entity)
         {
             await _dbContext.AddAsync(entity);
@@ -30,7 +31,7 @@ namespace DAL.Repository
 
         public async Task<Category> Get(int id)
         {
-            return await _dbContext.Categories.FirstOrDefaultAsync(x=>x.Id == id);
+            return await _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public IQueryable<Category> GetAll()

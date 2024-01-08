@@ -8,6 +8,6 @@ namespace Domain.ViewModel.Avatar
         }
 
         public int UserId { get; set; }
-        public MemoryStream file { get; set; }        
+        public MemoryStream file { get; set; }
     }
 }
