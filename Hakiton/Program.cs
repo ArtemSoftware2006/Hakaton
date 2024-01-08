@@ -11,18 +11,15 @@ using Service.Interfaces;
 using Services.Impl;
 using Services.Interfaces;
 
+// Проект использует пользовательские секреты
+// Просмотр пользовательских секретов dotnet suer-secrets list
+
 var builder = WebApplication.CreateBuilder(args);
 
-var conf_builder = new ConfigurationBuilder();
-
-conf_builder.SetBasePath(Directory.GetCurrentDirectory());
-conf_builder.AddJsonFile("appsettings.json");
-var config = conf_builder.Build();
-
-var connection = config["ConnectionStrings:DefaultConnection"];
+string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 31)))
+    options => options.UseNpgsql(connection)
 );
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

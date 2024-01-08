@@ -31,7 +31,7 @@ namespace Services.Impl
                     MinPrice = model.MinPrice,
                     CategoryId = model.CategoryId,
                     Status = Domain.Enum.StatusDeal.Published,
-                    location = model.location,
+                    Localtion = model.location,
                     UserId = model.UserId,
                 };
 
@@ -240,7 +240,7 @@ namespace Services.Impl
                     deal.Description = model.Description ?? deal.Description;
                     deal.Title = model.Title ?? deal.Title;
                     deal.CategoryId = model.CategoryId ?? deal.CategoryId;
-                    deal.location = model.location ?? deal.location;
+                    deal.Localtion = model.location ?? deal.Localtion;
 
                     await _dealRepository.Update(deal);
 

@@ -1,4 +1,5 @@
-﻿namespace Domain.Entity
+﻿
+namespace Domain.Entity
 {
     public class Category
     {
