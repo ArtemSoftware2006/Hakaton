@@ -23,7 +23,7 @@ namespace Services.Impl
             _cache = cache;
             avatarProvider = new AvatarProvider();
         }
-        public async Task<BaseResponse<bool>> Create(CreateAvatarVM model)
+        public async Task<BaseResponse<bool>> Create(CreateAvatarViewModel model)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Services.Impl
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponse<bool>> Update(CreateAvatarVM model)
+        public Task<BaseResponse<bool>> Update(CreateAvatarViewModel model)
         {
             throw new NotImplementedException();
         }

@@ -9,7 +9,7 @@ namespace Services.Interfaces
         Task<BaseResponse<byte[]>> Get(int id);
         Task<BaseResponse<List<Avatar>>> GetAll();
         Task<BaseResponse<bool>> Delete(int id);
-        Task<BaseResponse<bool>> Update(CreateAvatarVM model);
-        Task<BaseResponse<bool>> Create(CreateAvatarVM model);
+        Task<BaseResponse<bool>> Update(CreateAvatarViewModel model);
+        Task<BaseResponse<bool>> Create(CreateAvatarViewModel model);
     }
 }

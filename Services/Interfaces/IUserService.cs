@@ -13,7 +13,7 @@ namespace Service.Interfaces
         Task<BaseResponse<bool>> VIP(int id);
         Task<BaseResponse<bool>> Update(UserUpdateVM model);
         Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model);
-        Task<BaseResponse<User>> Registr(UserRegistrVM model);
-        Task<BaseResponse<User>> Login(UserLoginVM model);
+        Task<BaseResponse<User>> Register(UserRegistrViewModel model);
+        Task<BaseResponse<User>> Login(UserLoginViewModel model);
     }
 }

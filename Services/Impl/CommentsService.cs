@@ -17,7 +17,7 @@ namespace Services.Impl
             _logger = logger;
             _commentsRepository = commentsRepository;
         }
-        public async Task<BaseResponse<bool>> Create(CommentsVm model)
+        public async Task<BaseResponse<bool>> Create(CommentsViewModel model)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<CommentDeals>> Update(CommentsVm model)
+        public Task<BaseResponse<CommentDeals>> Update(CommentsViewModel model)
         {
             throw new NotImplementedException();
         }

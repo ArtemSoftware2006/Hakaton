@@ -24,7 +24,7 @@ namespace Services.Impl
             _logger = logger;
         }
 
-        public async Task<BaseResponse<bool>> Create(ProposalCreateVM model)
+        public async Task<BaseResponse<bool>> Create(ProposalCreateViewModel model)
         {
             try
             {
@@ -193,7 +193,7 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<Proposal>> Update(ProposalUpdateVM model)
+        public async Task<BaseResponse<Proposal>> Update(ProposalUpdateViewModel model)
         {
             try
             {

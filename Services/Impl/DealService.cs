@@ -16,7 +16,7 @@ namespace Services.Impl
             _dealRepository = dealRepository;
         }
 
-        public async Task<BaseResponse<bool>> Create(DealCreateVM model)
+        public async Task<BaseResponse<bool>> Create(DealCreateViewModel model)
         {
             try
             {
@@ -25,12 +25,11 @@ namespace Services.Impl
                     Title = model.Title,
                     Description = model.Description,
                     DatePublication = DateTime.UtcNow,
-                    StartDate = model.StartDate,
-                    StopDate = model.StopDate,
+                    ApproximateDate = model.ApproximateDate,
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
                     Status = Domain.Enum.StatusDeal.Published,
-                    Localtion = model.location,
+                    Localtion = model.Location,
                     CreatorUserId = model.UserId,
                 };
 
@@ -222,7 +221,7 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<Deal>> Update(DealUpdateVM model)
+        public async Task<BaseResponse<Deal>> Update(DealUpdateViewModel model)
         {
             try
             {
@@ -235,11 +234,10 @@ namespace Services.Impl
                 {
                     deal.MaxPrice = model.MaxPrice ?? deal.MaxPrice;
                     deal.MinPrice = model.MinPrice ?? deal.MinPrice;
-                    deal.StartDate = model.StartDate ?? deal.StartDate;
-                    deal.StopDate = model.StopDate ?? deal.StopDate;
+                    deal.ApproximateDate = model.ApproximateDate ?? deal.ApproximateDate;
                     deal.Description = model.Description ?? deal.Description;
                     deal.Title = model.Title ?? deal.Title;
-                    deal.Localtion = model.location ?? deal.Localtion;
+                    deal.Localtion = model.Location ?? deal.Localtion;
 
                     await _dealRepository.Update(deal);
 

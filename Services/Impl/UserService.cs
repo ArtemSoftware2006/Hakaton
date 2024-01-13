@@ -96,7 +96,7 @@ namespace Service.Impl
             }
         }
 
-        public async Task<BaseResponse<User>> Registr(UserRegistrVM model)
+        public async Task<BaseResponse<User>> Register(UserRegistrViewModel model)
         {
             try
             {
@@ -106,11 +106,20 @@ namespace Service.Impl
 
                 if (user == null)
                 {
+                    if (model.Password.Trim() != model.PasswordConfirm.Trim())
+                    {
+                        return new BaseResponse<User>
+                        {
+                            StatusCode = StatusCode.NotFound,
+                            Description = "Пароли не совпадают",
+                        };
+                    }
+
                     user = new User()
                     {
                         Email = model.Email,
                         Login = model.Login,
-                        Password = HashPasswordHelper.HashPassword(model.Password),
+                        Password = HashPasswordHelper.HashPassword(model.Password.Trim()),
                         Role = Role.User,
                         Balance = 1000,
                         IsVIP = false,
@@ -144,7 +153,7 @@ namespace Service.Impl
             }
         }
 
-        public async Task<BaseResponse<User>> Login(UserLoginVM model)
+        public async Task<BaseResponse<User>> Login(UserLoginViewModel model)
         {
             try
             {
@@ -153,7 +162,7 @@ namespace Service.Impl
                     .FirstOrDefault(
                         x =>
                             x.Login == model.Login
-                            && x.Password == HashPasswordHelper.HashPassword(model.Password)
+                            && x.Password == HashPasswordHelper.HashPassword(model.Password.Trim())
                     );
 
                 if (user != null)

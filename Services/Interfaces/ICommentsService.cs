@@ -8,8 +8,8 @@ namespace Services.Interfaces
     {
         Task<BaseResponse<CommentDeals>> Get(int id);
         Task<BaseResponse<bool>> Delete(int id);
-        Task<BaseResponse<CommentDeals>> Update(CommentsVm model);
-        Task<BaseResponse<bool>> Create(CommentsVm model);
+        Task<BaseResponse<CommentDeals>> Update(CommentsViewModel model);
+        Task<BaseResponse<bool>> Create(CommentsViewModel model);
         Task<BaseResponse<List<CommentDeals>>> GetAll(int dealId);
     }
 }
