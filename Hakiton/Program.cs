@@ -39,7 +39,6 @@ builder.Services.AddScoped<ICommentsService, CommentsService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc(
@@ -64,7 +63,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     {
         builder
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:4200")
             .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader()
