@@ -1,6 +1,6 @@
 namespace Domain.ViewModel.Comments
 {
-    public class CommentsVm
+    public class CommentsViewModel
     {
         public string Text { get; set; }
         public int UserId { get; set; }

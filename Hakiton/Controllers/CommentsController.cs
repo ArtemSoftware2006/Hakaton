@@ -42,7 +42,7 @@ namespace Hakiton.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] CommentsVm model)
+        public async Task<IActionResult> Create([FromBody] CommentsViewModel model)
         {
             var response = await _commentService.Create(model);
             if (response.StatusCode == Domain.Enum.StatusCode.Ok)

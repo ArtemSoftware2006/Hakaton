@@ -1,13 +1,12 @@
 ﻿namespace Domain.ViewModel.Deal
 {
-    public class DealCreateVM
+    public class DealCreateViewModel
     {
         public int UserId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string StartDate { get; set; }
-        public string StopDate { get; set; }
-        public string location { get; set; }
+        public DateOnly ApproximateDate { get; set; }
+        public string Location { get; set; }
         public int MinPrice { get; set; }
         public int MaxPrice { get; set; }
         public int CategoryId { get; set; }

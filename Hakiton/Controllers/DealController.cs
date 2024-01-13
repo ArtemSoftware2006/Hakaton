@@ -51,7 +51,7 @@ namespace Hakiton.Controllers
 
         [HttpPatch]
         [Authorize]
-        public async Task<IActionResult> Update([FromBody] DealUpdateVM model)
+        public async Task<IActionResult> Update([FromBody] DealUpdateViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Hakiton.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] DealCreateVM model)
+        public async Task<IActionResult> Create([FromBody] DealCreateViewModel model)
         {
             if (ModelState.IsValid)
             {

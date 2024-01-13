@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Domain.Response;
 using Domain.Entity;
 using Microsoft.AspNetCore.Authorization;
+using Domain.Validators;
 
 namespace Hakaton.Controllers
 {
@@ -23,11 +24,11 @@ namespace Hakaton.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Registr([FromBody] UserRegistrVM model)
+        public async Task<IActionResult> Register([FromBody][PasswordsMatch]UserRegistrViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _userService.Registr(model);
+                var response = await _userService.Register(model);
 
                 if (response.StatusCode == Domain.Enum.StatusCode.Ok)
                 {
@@ -41,7 +42,7 @@ namespace Hakaton.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UserLoginVM model)
+        public async Task<IActionResult> Login([FromBody] UserLoginViewModel model)
         {
             if (ModelState.IsValid)
             {

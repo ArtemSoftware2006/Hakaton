@@ -1,6 +1,6 @@
 ﻿namespace Domain.ViewModel.Proposal
 {
-    public class ProposalUpdateVM
+    public class ProposalUpdateViewModel
     {
         public int Id { get; set; }
         public string? Descripton { get; set; }

@@ -1,8 +1,8 @@
 namespace Domain.ViewModel.Avatar
 {
-    public class CreateAvatarVM
+    public class CreateAvatarViewModel
     {
-        public CreateAvatarVM()
+        public CreateAvatarViewModel()
         {
             file = new MemoryStream();
         }

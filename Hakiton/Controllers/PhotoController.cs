@@ -31,7 +31,7 @@ namespace Hakiton.Controllers
                     return StatusCode(400, "Вы не загрузили фото");
                 }
 
-                var model = new CreateAvatarVM() { UserId = UserId };
+                var model = new CreateAvatarViewModel() { UserId = UserId };
 
                 await avatar.CopyToAsync(model.file);
 
@@ -74,13 +74,13 @@ namespace Hakiton.Controllers
         {
             if (ModelState.IsValid)
             {
-                var files = new List<AvatarVM>();
+                var files = new List<AvatarViewModel>();
                 DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory + "/Avatars");
 
                 foreach (var item in dir.GetFiles())
                 {
                     files.Add(
-                        new AvatarVM
+                        new AvatarViewModel
                         {
                             Path = item.FullName,
                             UserId = int.Parse(Path.GetFileNameWithoutExtension(item.Name))

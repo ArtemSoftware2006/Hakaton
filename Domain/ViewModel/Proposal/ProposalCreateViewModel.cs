@@ -1,6 +1,6 @@
 ﻿namespace Domain.ViewModel.Proposal
 {
-    public class ProposalCreateVM
+    public class ProposalCreateViewModel
     {
         public string Description { get; set; }
         public int Price { get; set; }

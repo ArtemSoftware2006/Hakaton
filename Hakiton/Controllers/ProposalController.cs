@@ -56,7 +56,7 @@ namespace Hakiton.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] ProposalCreateVM model)
+        public async Task<IActionResult> Create([FromBody] ProposalCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -137,7 +137,7 @@ namespace Hakiton.Controllers
 
         [HttpPatch]
         [Authorize]
-        public async Task<IActionResult> Update([FromBody] ProposalUpdateVM model)
+        public async Task<IActionResult> Update([FromBody] ProposalUpdateViewModel model)
         {
             if (ModelState.IsValid)
             {
