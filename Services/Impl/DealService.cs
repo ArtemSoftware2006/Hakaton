@@ -1,4 +1,5 @@
-﻿using DAL.Interfaces;
+﻿using AutoMapper;
+using DAL.Interfaces;
 using Domain.Entity;
 using Domain.Response;
 using Domain.ViewModel.Deal;
@@ -9,10 +10,13 @@ namespace Services.Impl
 {
     public class DealService : IDealService
     {
-        public IDealRepository _dealRepository { get; set; }
+        private readonly IDealRepository _dealRepository;
+        private readonly IMapper _mapper;
 
-        public DealService(IDealRepository dealRepository, IUserRepository userRepository)
+        public DealService(IDealRepository dealRepository,
+            IMapper mapper)
         {
+            _mapper = mapper;
             _dealRepository = dealRepository;
         }
 
@@ -119,24 +123,25 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<List<Deal>>> GetAll()
+        public async Task<BaseResponse<List<DealCardViewModel>>> GetAll()
         {
             try
             {
                 var deals = _dealRepository
                     .GetAll()
                     .Where(x => x.Status == Domain.Enum.StatusDeal.Published)
+                    .Select(x => _mapper.Map<DealCardViewModel>(x))
                     .ToList();
                 if (deals.Count != 0)
                 {
-                    return new BaseResponse<List<Deal>>()
+                    return new BaseResponse<List<DealCardViewModel>>()
                     {
                         Data = deals,
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
                 }
-                return new BaseResponse<List<Deal>>()
+                return new BaseResponse<List<DealCardViewModel>>()
                 {
                     Data = deals,
                     Description = "Нет заказов",
@@ -145,7 +150,7 @@ namespace Services.Impl
             }
             catch (Exception ex)
             {
-                return new BaseResponse<List<Deal>>()
+                return new BaseResponse<List<DealCardViewModel>>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,

@@ -16,11 +16,13 @@ namespace Hakaton.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        public IUserService _userService { get; set; }
+        private readonly IUserService _userService;
+        private readonly AuthTokenOptions _options;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, AuthTokenOptions options)
         {
             _userService = userService;
+            _options = options;
         }
 
         [HttpPost]
@@ -68,15 +70,15 @@ namespace Hakaton.Controllers
             };
 
             var jwt = new JwtSecurityToken(
-                audience: AuthTokenOptions.AUDIENCE,
-                issuer: AuthTokenOptions.ISSUER,
+                audience: _options.AUDIENCE,
+                issuer: _options.ISSUER,
                 notBefore: new DateTimeOffset(DateTime.Now).DateTime,
                 expires: new DateTimeOffset(
-                    DateTime.Now.AddMinutes(AuthTokenOptions.LIFETIME)
+                    DateTime.Now.AddMinutes(_options.LIFETIME)
                 ).DateTime,
                 claims: claims,
                 signingCredentials: new SigningCredentials(
-                    AuthTokenOptions.GetSymmetricSecurityKey(),
+                    _options.GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256
                 )
             );

@@ -1,18 +1,33 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Npgsql.Replication;
 using System.Text;
 
 namespace Hakiton
 {
     public class AuthTokenOptions
     {
-        public const string ISSUER = "MyAuthServer";
-        public const string AUDIENCE = "MyAuthClient";
-        const string KEY = "secret060606gfghdgdsfgfdgergsdf";
-        public const int LIFETIME = 15;
+        public string ISSUER {get;}
+        public string AUDIENCE {get;}
+        public int LIFETIME {get;}
+        private readonly IConfiguration _configuration;
+        private readonly string KEY;
+        public AuthTokenOptions(IConfiguration configuration)
+        {
+            _configuration = configuration;
 
-        public static SymmetricSecurityKey GetSymmetricSecurityKey()
+            ISSUER = _configuration["Jwt:Issuer"];
+            AUDIENCE = _configuration["Jwt:Audience"];
+            LIFETIME = int.Parse(_configuration["Jwt:Lifetime"]);
+            KEY = _configuration["Jwt:Secret"];
+        }
+
+        public SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
+        }
+        public static SymmetricSecurityKey GetSymmetricSecurityKey(string key)
+        {
+            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
         }
     }
 }

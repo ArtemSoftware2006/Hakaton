@@ -10,6 +10,7 @@ using Service.Impl;
 using Service.Interfaces;
 using Services.Impl;
 using Services.Interfaces;
+using Services.Mappers;
 
 // Проект использует пользовательские секреты
 // Просмотр пользовательских секретов dotnet suer-secrets list
@@ -18,10 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseNpgsql(connection)
-);
+builder.Services.AddDbContext<AppDbContext>(options => 
+{
+    options.UseNpgsql(connection);
+});
 
+builder.Services.AddSingleton<AuthTokenOptions>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMoneyRepository, MoneyRepository>();
 builder.Services.AddScoped<IAvatarRepository, AvatarRepository>();
@@ -36,6 +39,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IApprovedDealService, ApprovedDealService>();
 builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 builder.Services.AddScoped<ICommentsService, CommentsService>();
+
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
@@ -79,10 +84,10 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = AuthTokenOptions.ISSUER,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidateAudience = true,
-            ValidAudience = AuthTokenOptions.AUDIENCE,
-            IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(),
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = AuthTokenOptions.GetSymmetricSecurityKey(builder.Configuration["Jwt:Secret"]),
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
         };
@@ -129,5 +134,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppDbContext>();    
+    context.Database.Migrate();
+}
 
 app.Run();

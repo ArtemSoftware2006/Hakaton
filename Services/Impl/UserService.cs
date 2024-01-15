@@ -1,4 +1,5 @@
-﻿using DAL.Interfaces;
+﻿using AutoMapper;
+using DAL.Interfaces;
 using Domain.Entity;
 using Domain.Enum;
 using Domain.Helper;
@@ -6,6 +7,7 @@ using Domain.Response;
 using Domain.ViewModel.User;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
+using Services.Mappers;
 
 namespace Service.Impl
 {
@@ -13,9 +15,13 @@ namespace Service.Impl
     {
         private readonly IUserRepository _userRepository;
         private readonly IMoneyRepository _moneyRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMoneyRepository moneyRepository)
+        public UserService(IUserRepository userRepository, 
+            IMoneyRepository moneyRepository,
+            IMapper mapper)
         {
+            _mapper = mapper;
             _moneyRepository = moneyRepository;
             _userRepository = userRepository;
         }
@@ -115,15 +121,7 @@ namespace Service.Impl
                         };
                     }
 
-                    user = new User()
-                    {
-                        Email = model.Email,
-                        Login = model.Login,
-                        Password = HashPasswordHelper.HashPassword(model.Password.Trim()),
-                        Role = Role.User,
-                        Balance = 1000,
-                        IsVIP = false,
-                    };
+                    user = _mapper.Map<User>(model);
 
                     await _userRepository.Create(user);
 
