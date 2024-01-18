@@ -1,5 +1,6 @@
 ﻿using DAL.Interfaces;
 using Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repository
 {
@@ -32,6 +33,11 @@ namespace DAL.Repository
         {
             return _dbContext.Deals.FirstOrDefault(x => x.Id == id);
         }
+        public async Task<Deal> GetWithCreator(int id)
+        {
+            return _dbContext.Deals.Include(x => x.CreatorUser).FirstOrDefault(x => x.Id == id);
+        }
+
 
         public IQueryable<Deal> GetAll()
         {

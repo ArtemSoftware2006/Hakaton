@@ -3,6 +3,7 @@ using DAL.Interfaces;
 using Domain.Entity;
 using Domain.Response;
 using Domain.ViewModel.Deal;
+using Domain.ViewModel.User;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 
@@ -92,30 +93,30 @@ namespace Services.Impl
             }
         }
 
-        public async Task<BaseResponse<Deal>> Get(int id)
+        public async Task<BaseResponse<DealDetailsViewModel>> Get(int id)
         {
             try
             {
-                var deal = await _dealRepository.Get(id);
+                Deal deal = await _dealRepository.GetWithCreator(id);
                 if (deal != null)
                 {
-                    return new BaseResponse<Deal>()
+                    DealDetailsViewModel dealModel = _mapper.Map<DealDetailsViewModel>(deal);
+                    return new BaseResponse<DealDetailsViewModel>()
                     {
-                        Data = deal,
+                        Data = dealModel,
                         Description = "Ok",
                         StatusCode = Domain.Enum.StatusCode.Ok,
                     };
                 }
-                return new BaseResponse<Deal>()
+                return new BaseResponse<DealDetailsViewModel>()
                 {
-                    Data = deal,
                     Description = $"Нет заказа с id = {id}",
                     StatusCode = Domain.Enum.StatusCode.NotFound,
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<Deal>()
+                return new BaseResponse<DealDetailsViewModel>()
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,
