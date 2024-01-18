@@ -5,6 +5,7 @@ using Domain.Enum;
 using Domain.Helper;
 using Domain.Response;
 using Domain.ViewModel.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Services.Mappers;
@@ -31,22 +32,23 @@ namespace Service.Impl
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse<User>> Get(int id)
+        public async Task<BaseResponse<UserProfileViewModel>> Get(int id)
         {
             try
             {
-                var user = await _userRepository.Get(id);
+                User user = await _userRepository.Get(id);
 
                 if (user != null)
                 {
-                    return new BaseResponse<User>()
+                    UserProfileViewModel userModel = _mapper.Map<UserProfileViewModel>(user);
+                    return new BaseResponse<UserProfileViewModel>()
                     {
-                        Data = user,
+                        Data = userModel,
                         Description = "Ok",
                         StatusCode = StatusCode.Ok,
                     };
                 }
-                return new BaseResponse<User>()
+                return new BaseResponse<UserProfileViewModel>()
                 {
                     Description = "нет пользователя с таким id",
                     StatusCode = StatusCode.NotFound,
@@ -54,7 +56,7 @@ namespace Service.Impl
             }
             catch (Exception ex)
             {
-                return new BaseResponse<User>
+                return new BaseResponse<UserProfileViewModel>
                 {
                     StatusCode = StatusCode.InternalServiseError,
                     Description = ex.Message,
@@ -270,13 +272,8 @@ namespace Service.Impl
                 var user = await _userRepository.Get(model.Id);
                 if (user != null)
                 {
-                    user.FirstName = model.FirstName ?? user.FirstName;
-                    user.LastName = model.LastName ?? user.LastName;
-                    user.SecondName = model.SecondName ?? user.SecondName;
-                    user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
-                    user.Description = model.Description ?? user.Description;
-
-                    _userRepository.Update(user);
+                    _mapper.Map(model, user);
+                    await _userRepository.Update(user);
 
                     return new BaseResponse<bool>()
                     {

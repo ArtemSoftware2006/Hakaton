@@ -101,7 +101,7 @@ namespace Hakaton.Controllers
             return Ok();
         }
 
-        [HttpPatch]
+        [HttpPut]
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UserUpdateVM model)
         {
