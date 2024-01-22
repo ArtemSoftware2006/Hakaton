@@ -16,13 +16,6 @@ namespace Hakiton.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> TestAuth()
-        {
-            return Ok("Вы авторизованы");
-        }
-
-        [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
             if (ModelState.IsValid)

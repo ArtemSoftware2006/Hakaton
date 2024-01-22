@@ -6,3 +6,22 @@
 * Добавить прикрепление файлов к заказу
 * Внедрить Mapster
 * В чем разница между PhotoViewModel и AvatarViewModel
+
+public async Task<List<Order>> GetOrdersByAllTags(string[] tags)
+{
+    return await _context.Orders
+        .Where(o => tags.All(t => o.OrderTags.Any(ot => ot.Tag.Name == t)))
+        .ToListAsync();
+}
+
+[HttpPost("{orderId}/tags")]
+public async Task<ActionResult> AddTagToOrder(int orderId, TagDto tagDto)
+{
+    // Реализация добавления тега к заказу
+}
+
+[HttpGet("search")]
+public async Task<ActionResult<IEnumerable<Order>>> SearchOrdersByTags([FromQuery] string[] tags)
+{
+    // Реализация поиска заказов по тегам
+}

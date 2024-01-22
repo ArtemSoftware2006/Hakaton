@@ -103,7 +103,7 @@ namespace Hakaton.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> Update([FromBody] UserUpdateVM model)
+        public async Task<IActionResult> Update([FromBody] UserUpdateViewModel model)
         {
             if (ModelState.IsValid)
             {

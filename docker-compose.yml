@@ -3,15 +3,23 @@ version: "3.1"
 services:
   app:
     depends_on:
-       - mysql
-    image: artem06/hakiton
+       - db
+    image: artem06/code-masters:1.0
     ports:
-      - "80:80"
+      - "5202:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development  
-  mysql:
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
+      ConnectionStrings__DefaultConnection: 
+        "Host=db;Port=5432;Database=Freelance;Username=postgres;Password=1111"
+      Jwt__secret: secret060606gfghdgdsfgfdgergsdfdgrrer
+      Jwt__Issuer: http://localhost:5202
+      Jwt__Audience: http://localhost:5202
+      Jwt__Lifetime: 240
+  db:
+    image: postgres:latest
+    ports:
+      - 5433:5432
     environment:
-      MYSQL_ROOT_PASSWORD: "1111"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_DB: Freelance

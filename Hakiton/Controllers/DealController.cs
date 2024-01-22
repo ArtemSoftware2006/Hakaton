@@ -1,4 +1,5 @@
-﻿using Domain.ViewModel.Deal;
+﻿using Domain.Response;
+using Domain.ViewModel.Deal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
@@ -150,6 +151,28 @@ namespace Hakiton.Controllers
                 return Json(response.Data);
             }
             return BadRequest(response.Description);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddCategories([FromBody]DealAddCategoriesViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                BaseResponse<bool> result = await _dealService.AddCategories(model);
+
+                if (result.StatusCode == Domain.Enum.StatusCode.NotFound)
+                {
+                    return NotFound( new {result.Data, result.Description});
+                }
+                if (result.StatusCode == Domain.Enum.StatusCode.InternalServiseError)
+                {
+                    return StatusCode(500, new {result.Data, result.Description});
+                }
+                return Ok(result.Data);   
+            }
+
+            return BadRequest("Модель не валидна!");
         }
     }
 }
