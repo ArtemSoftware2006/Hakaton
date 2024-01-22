@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using System.Text.Json.Serialization;
+using Domain.Enum;
 
 namespace Domain.Entity
 {
@@ -18,8 +19,10 @@ namespace Domain.Entity
         public string? Description { get; set; }
         public List<CommentUsers> CommentUsers { get; set; }
         public List<CommentDeals> CommentDeals { get; set; }
+        [JsonIgnore]
         public List<Category> Categories { get; set; }
         public List<Proposal> Proposals { get; set; }
+        [JsonIgnore]
         public List<Deal> CreatedDeals { get; set; }
         public List<Deal> AcceptedDeals { get; set; }
     }
