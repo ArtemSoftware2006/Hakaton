@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using System.Text.Json.Serialization;
+using Domain.Enum;
 
 namespace Domain.Entity
 {

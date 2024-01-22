@@ -42,14 +42,7 @@ namespace Hakiton.Controllers
                 || response.StatusCode == Domain.Enum.StatusCode.NotFound
             )
             {
-                string json = JsonConvert.SerializeObject(
-                    response.Data,
-                    new JsonSerializerSettings
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    }
-                );
-                return Ok(json);
+                return Json(response.Data);
             }
             return BadRequest(response.Description);
         }
@@ -84,14 +77,8 @@ namespace Hakiton.Controllers
                 || response.StatusCode == Domain.Enum.StatusCode.NotFound
             )
             {
-                string json = JsonConvert.SerializeObject(
-                    response.Data,
-                    new JsonSerializerSettings
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    }
-                );
-                return Ok(json);
+
+                return Ok(response.Data);
             }
             return BadRequest(response.Description);
         }
@@ -106,14 +93,7 @@ namespace Hakiton.Controllers
                 || response.StatusCode == Domain.Enum.StatusCode.NotFound
             )
             {
-                string json = JsonConvert.SerializeObject(
-                    response.Data,
-                    new JsonSerializerSettings
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    }
-                );
-                return Ok(json);
+                return Json(response.Data);
             }
             return BadRequest(response.Description);
         }

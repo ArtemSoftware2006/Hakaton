@@ -21,6 +21,7 @@ namespace Domain.Entity
         public List<CommentDeals> CommentDeals { get; set; }
         [JsonIgnore]
         public List<Category> Categories { get; set; }
+        [JsonIgnore]
         public List<Proposal> Proposals { get; set; }
         [JsonIgnore]
         public List<Deal> CreatedDeals { get; set; }

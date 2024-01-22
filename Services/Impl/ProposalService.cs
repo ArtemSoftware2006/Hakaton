@@ -234,7 +234,10 @@ namespace Services.Impl
         {
             try
             {
-                var proposals = _proposalRepository.GetAll().Where(x => x.UserId == id).ToList();
+                var proposals = _proposalRepository
+                    .GetAll()
+                    .Where(x => x.UserId == id)
+                    .ToList();
                 if (proposals.Count != 0)
                 {
                     return new BaseResponse<List<Proposal>>()
