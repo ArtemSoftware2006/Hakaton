@@ -39,6 +39,11 @@ namespace DAL.Repository
             return _dbContext.Users;
         }
 
+        public Task<User> GetWithCategories(int id)
+        {
+            return _dbContext.Users.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<User> Update(User entity)
         {
             _dbContext.Update(entity);

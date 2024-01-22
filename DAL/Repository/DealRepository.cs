@@ -41,7 +41,7 @@ namespace DAL.Repository
 
         public IQueryable<Deal> GetAll()
         {
-            return _dbContext.Deals;
+            return _dbContext.Deals.Include(x => x.Categories).Include(x => x.CreatorUser);
         }
 
         public async Task<Deal> Update(Deal entity)
@@ -50,6 +50,11 @@ namespace DAL.Repository
             await _dbContext.SaveChangesAsync();
 
             return entity;
+        }
+
+        public async Task<Deal> GetWithCategory(int id)
+        {
+            return _dbContext.Deals.Include(x => x.Categories).FirstOrDefault(x => x.Id == id);
         }
     }
 }
