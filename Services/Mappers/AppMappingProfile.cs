@@ -19,7 +19,7 @@ namespace Services.Mappers
 
             CreateMap<User, UserProfileViewModel>().ReverseMap();
             CreateMap<User, UserCardViewModel>().ReverseMap();
-            CreateMap<User, UserUpdateVM>().ReverseMap();
+            CreateMap<User, UserUpdateViewModel>().ReverseMap();
 
             CreateMap<Deal, DealCardViewModel>().ReverseMap();
             CreateMap<Deal, DealDetailsViewModel>().ReverseMap()
@@ -30,6 +30,10 @@ namespace Services.Mappers
                                         src.CreatorUser.Description, 
                                         src.CreatorUser.Categories
                     )));
+            CreateMap<Deal, DealCreateViewModel>().ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusDeal.Published))
+                .ForMember(dest => dest.DatePublication, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.CreatorUserId, opt => opt.MapFrom(src => src.UserId));
 		}
     }
 }

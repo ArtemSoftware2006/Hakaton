@@ -34,6 +34,7 @@ namespace Services.Impl
                     .FirstOrDefault();
                 if (proposal == null)
                 {
+                    //TODO Добавить маппер
                     proposal = new Proposal()
                     {
                         Descripton = model.Description,

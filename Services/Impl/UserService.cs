@@ -5,10 +5,7 @@ using Domain.Enum;
 using Domain.Helper;
 using Domain.Response;
 using Domain.ViewModel.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Services.Mappers;
 
 namespace Service.Impl
 {
@@ -16,12 +13,15 @@ namespace Service.Impl
     {
         private readonly IUserRepository _userRepository;
         private readonly IMoneyRepository _moneyRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, 
+        public UserService(IUserRepository userRepository,
+            ICategoryRepository categoryRepository, 
             IMoneyRepository moneyRepository,
             IMapper mapper)
         {
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _moneyRepository = moneyRepository;
             _userRepository = userRepository;
@@ -36,7 +36,7 @@ namespace Service.Impl
         {
             try
             {
-                User user = await _userRepository.Get(id);
+                User user = await _userRepository.GetWithCategories(id);
 
                 if (user != null)
                 {
@@ -67,41 +67,6 @@ namespace Service.Impl
         public Task<BaseResponse<User>> GetByLogin(string login)
         {
             throw new NotImplementedException();
-        }
-
-        public async Task<BaseResponse<bool>> SetCategory(UserSetCategoryVM model)
-        {
-            try
-            {
-                var user = await _userRepository
-                    .GetAll()
-                    .FirstOrDefaultAsync(x => x.Id == model.UserId);
-                if (user != null)
-                {
-                    await _userRepository.Update(user);
-
-                    return new BaseResponse<bool>()
-                    {
-                        Data = true,
-                        Description = "Ok",
-                        StatusCode = StatusCode.Ok,
-                    };
-                }
-                return new BaseResponse<bool>()
-                {
-                    Data = false,
-                    Description = $"Пользователя с id{model.UserId}",
-                    StatusCode = StatusCode.NotFound,
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<bool>
-                {
-                    StatusCode = StatusCode.InternalServiseError,
-                    Description = ex.Message,
-                };
-            }
         }
 
         public async Task<BaseResponse<User>> Register(UserRegistrViewModel model)
@@ -265,7 +230,7 @@ namespace Service.Impl
             }
         }
 
-        public async Task<BaseResponse<bool>> Update(UserUpdateVM model)
+        public async Task<BaseResponse<bool>> Update(UserUpdateViewModel model)
         {
             try
             {
@@ -273,6 +238,14 @@ namespace Service.Impl
                 if (user != null)
                 {
                     _mapper.Map(model, user);
+
+                     List<Category> categories = _categoryRepository
+                        .GetAll()
+                        .Where(x => model.CategoryIds.Contains(x.Id))
+                        .ToList();
+
+                    user.Categories = categories;
+
                     await _userRepository.Update(user);
 
                     return new BaseResponse<bool>()
@@ -295,6 +268,39 @@ namespace Service.Impl
                 {
                     StatusCode = StatusCode.InternalServiseError,
                     Description = $"[Login(User)] : {ex.Message})",
+                };
+            }
+        }
+
+        public async Task<BaseResponse<bool>> SetCategory(UserSetCategoryViewModel model)
+        {
+            try
+            {
+                var user = await _userRepository.Get(model.UserId);
+                if (user != null)
+                {
+                    await _userRepository.Update(user);
+
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        Description = "Ok",
+                        StatusCode = StatusCode.Ok,
+                    };
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = $"Пользователя с id{model.UserId}",
+                    StatusCode = StatusCode.NotFound,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>
+                {
+                    StatusCode = StatusCode.InternalServiseError,
+                    Description = ex.Message,
                 };
             }
         }

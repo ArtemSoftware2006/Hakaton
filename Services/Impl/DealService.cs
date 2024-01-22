@@ -12,11 +12,14 @@ namespace Services.Impl
     public class DealService : IDealService
     {
         private readonly IDealRepository _dealRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
         public DealService(IDealRepository dealRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ICategoryRepository categoryRepository)
         {
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _dealRepository = dealRepository;
         }
@@ -37,6 +40,13 @@ namespace Services.Impl
                     Localtion = model.Location,
                     CreatorUserId = model.UserId,
                 };
+
+                List<Category> categories = _categoryRepository
+                    .GetAll()
+                    .Where(x => model.CategoryIds.Contains(x.Id))
+                    .ToList();
+
+                deal.Categories = categories;
 
                 await _dealRepository.Create(deal);
 
@@ -266,6 +276,46 @@ namespace Services.Impl
                 {
                     Description = ex.Message,
                     StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                };
+            }
+        }
+
+        public async Task<BaseResponse<bool>> AddCategories(DealAddCategoriesViewModel model)
+        {
+            try
+            {
+                Deal deal = await _dealRepository.GetWithCategory(model.DealId);
+
+                if (deal == null)
+                {
+                    return new BaseResponse<bool>() 
+                    {
+                        Description = $"Нет заказа с id = {model.DealId}",
+                        StatusCode = Domain.Enum.StatusCode.NotFound
+                    };
+                }
+
+                IEnumerable<Category> categories = _categoryRepository
+                    .GetAll()
+                    .Where(x => model.CategoryIds.Contains(x.Id));
+
+                deal.Categories.AddRange(categories);
+
+                deal = await _dealRepository.Update(deal);
+
+                return new BaseResponse<bool>() 
+                {
+                    Data = true,
+                    StatusCode = Domain.Enum.StatusCode.Ok,
+                    Description = "Ok"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>() 
+                {
+                    Description = ex.Message,
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError
                 };
             }
         }
