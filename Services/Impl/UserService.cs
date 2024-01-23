@@ -234,7 +234,7 @@ namespace Service.Impl
         {
             try
             {
-                var user = await _userRepository.Get(model.Id);
+                var user = await _userRepository.GetWithCategories(model.Id);
                 if (user != null)
                 {
                     _mapper.Map(model, user);
