@@ -8,7 +8,7 @@ namespace Services.Interfaces
     public interface IDealService
     {
         Task<BaseResponse<DealDetailsViewModel>> Get(int id);
-        Task<BaseResponse<Deal>> GetByTitle(string Title);
+        Task<BaseResponse<List<Deal>>> GetByTitle(string Title);
         Task<BaseResponse<bool>> Delete(int id);
         Task<BaseResponse<Deal>> Update(DealUpdateViewModel model);
         Task<BaseResponse<bool>> Create(DealCreateViewModel model);

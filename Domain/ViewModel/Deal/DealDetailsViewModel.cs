@@ -8,6 +8,7 @@ namespace Domain.ViewModel.User
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public int Views { get; set; }
         public DateTime DatePublication { get; set; }
         public int MinPrice { get; set; }
         public int MaxPrice { get; set; }

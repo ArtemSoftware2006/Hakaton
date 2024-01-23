@@ -103,6 +103,19 @@ namespace Hakiton.Controllers
             }
             return BadRequest("Ошибка");
         }
+        [HttpGet]
+        public async Task<IActionResult> GetByTitle(string title) {
+            var response = await _dealService.GetByTitle(title);
+
+            if (
+                response.StatusCode == Domain.Enum.StatusCode.Ok
+                || response.StatusCode == Domain.Enum.StatusCode.NotFound
+            )
+            {
+                return Json(response.Data);
+            }
+            return BadRequest(response.Description);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetDealsByCategory(int id)

@@ -31,6 +31,7 @@ namespace Services.Impl
                 var deal = new Deal()
                 {
                     Title = model.Title,
+                    Views = 0,
                     Description = model.Description,
                     DatePublication = DateTime.UtcNow,
                     ApproximateDate = model.ApproximateDate,
@@ -111,6 +112,10 @@ namespace Services.Impl
                 if (deal != null)
                 {
                     DealDetailsViewModel dealModel = _mapper.Map<DealDetailsViewModel>(deal);
+
+                    deal.Views++;
+                    await _dealRepository.Update(deal);
+
                     return new BaseResponse<DealDetailsViewModel>()
                     {
                         Data = dealModel,
@@ -169,9 +174,27 @@ namespace Services.Impl
             }
         }
 
-        public Task<BaseResponse<Deal>> GetByTitle(string Title)
+        public async Task<BaseResponse<List<Deal>>> GetByTitle(string Title)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Deal> deals = await _dealRepository
+                    .GetAll()
+                    .Where(x => x.Title.Contains(Title))
+                    .ToListAsync();
+
+                return new BaseResponse<List<Deal>>() {
+                    Data = deals,
+                    StatusCode = Domain.Enum.StatusCode.Ok
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Deal>>() {
+                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    Description = ex.Message
+                };
+            }
         }
 
         public async Task<BaseResponse<List<Deal>>> GetByCetegory(int id)
