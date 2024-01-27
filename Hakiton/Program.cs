@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddSingleton<AuthTokenOptions>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMoneyRepository, MoneyRepository>();
 builder.Services.AddScoped<IAvatarRepository, AvatarRepository>();

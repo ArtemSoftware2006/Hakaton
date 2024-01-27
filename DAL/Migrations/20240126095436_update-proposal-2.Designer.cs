@@ -3,6 +3,7 @@ using System;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240126095436_update-proposal-2")]
+    partial class updateproposal2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,39 +206,6 @@ namespace DAL.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("CommentUsers");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Contract", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DealId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ExecutorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProposalId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DealId");
-
-                    b.HasIndex("EmployerId");
-
-                    b.HasIndex("ExecutorId");
-
-                    b.HasIndex("ProposalId");
-
-                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("Domain.Entity.Deal", b =>
@@ -455,41 +425,6 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Contract", b =>
-                {
-                    b.HasOne("Domain.Entity.Deal", "Deal")
-                        .WithMany()
-                        .HasForeignKey("DealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.User", "Employer")
-                        .WithMany("ContractsAsEmployer")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.User", "Executor")
-                        .WithMany("ContractsAsExecutor")
-                        .HasForeignKey("ExecutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Proposal", "Proposal")
-                        .WithMany()
-                        .HasForeignKey("ProposalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deal");
-
-                    b.Navigation("Employer");
-
-                    b.Navigation("Executor");
-
-                    b.Navigation("Proposal");
-                });
-
             modelBuilder.Entity("Domain.Entity.Deal", b =>
                 {
                     b.HasOne("Domain.Entity.User", "CreatorUser")
@@ -538,10 +473,6 @@ namespace DAL.Migrations
                     b.Navigation("CommentDeals");
 
                     b.Navigation("CommentUsers");
-
-                    b.Navigation("ContractsAsEmployer");
-
-                    b.Navigation("ContractsAsExecutor");
 
                     b.Navigation("CreatedDeals");
 

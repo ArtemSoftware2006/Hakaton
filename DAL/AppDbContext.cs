@@ -7,6 +7,7 @@ namespace DAL
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Contract> Contracts { get; set; }
         public DbSet<CommentDeals> CommentDeals { get; set; }
         public DbSet<CommentUsers> CommentUsers { get; set; }
         public DbSet<Deal> Deals { get; set; }
@@ -36,6 +37,16 @@ namespace DAL
                 .HasOne(x => x.CreatorUser)
                 .WithMany(x => x.CommentDeals)
                 .HasForeignKey(x => x.CreatorUserId);
+
+            modelBuilder.Entity<Contract>()
+                .HasOne(x => x.Executor)
+                .WithMany(x => x.ContractsAsExecutor)
+                .HasForeignKey(x => x.ExecutorId);
+            
+            modelBuilder.Entity<Contract>()
+                .HasOne(x => x.Employer)
+                .WithMany(x => x.ContractsAsEmployer)
+                .HasForeignKey(x => x.EmployerId);
             
             modelBuilder
                 .Entity<Category>()
