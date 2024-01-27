@@ -9,6 +9,6 @@
         public int? MaxPrice { get; set; }
         public string? Location { get; set; }
         public DateOnly? ApproximateDate { get; set; }
-        public int? CategoryId { get; set; }
+        public List<int>? CategoryIds { get; set; }
     }
 }

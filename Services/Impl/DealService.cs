@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DAL.Interfaces;
 using Domain.Entity;
+using Domain.Enum;
 using Domain.Response;
 using Domain.ViewModel.Deal;
 using Domain.ViewModel.User;
@@ -12,13 +13,16 @@ namespace Services.Impl
     public class DealService : IDealService
     {
         private readonly IDealRepository _dealRepository;
+        private readonly IProposalRepository _proposalRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
         public DealService(IDealRepository dealRepository,
             IMapper mapper,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IProposalRepository proposalRepository)
         {
+            _proposalRepository = proposalRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
             _dealRepository = dealRepository;
@@ -37,7 +41,7 @@ namespace Services.Impl
                     ApproximateDate = model.ApproximateDate,
                     MaxPrice = model.MaxPrice,
                     MinPrice = model.MinPrice,
-                    Status = Domain.Enum.StatusDeal.Published,
+                    Status =  StatusDeal.Published,
                     Localtion = model.Location,
                     CreatorUserId = model.UserId,
                 };
@@ -55,7 +59,7 @@ namespace Services.Impl
                 {
                     Data = true,
                     Description = "Ok",
-                    StatusCode = Domain.Enum.StatusCode.Ok,
+                    StatusCode =  StatusCode.Ok,
                 };
             }
             catch (Exception ex)
@@ -64,7 +68,7 @@ namespace Services.Impl
                 {
                     Data = false,
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -83,13 +87,13 @@ namespace Services.Impl
                     {
                         Data = true,
                         Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                     };
                 }
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                     Description = $"Нет заказа с id = {id}",
                 };
             }
@@ -99,12 +103,12 @@ namespace Services.Impl
                 {
                     Data = false,
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
 
-        public async Task<BaseResponse<DealDetailsViewModel>> Get(int id)
+        public async Task<BaseResponse<DealDetailsViewModel>> Get(int id, int userId)
         {
             try
             {
@@ -113,6 +117,14 @@ namespace Services.Impl
                 {
                     DealDetailsViewModel dealModel = _mapper.Map<DealDetailsViewModel>(deal);
 
+                    List<Proposal> proposals = _proposalRepository
+                        .GetAll()
+                        .Where(x => x.UserId == userId)
+                        .ToList();
+
+                    bool alreadyResponded = proposals.Any(y => y.DealId == deal.Id);
+                    dealModel.AlreadyResponded = alreadyResponded;
+
                     deal.Views++;
                     await _dealRepository.Update(deal);
 
@@ -120,13 +132,13 @@ namespace Services.Impl
                     {
                         Data = dealModel,
                         Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                     };
                 }
                 return new BaseResponse<DealDetailsViewModel>()
                 {
                     Description = $"Нет заказа с id = {id}",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                 };
             }
             catch (Exception ex)
@@ -134,7 +146,7 @@ namespace Services.Impl
                 return new BaseResponse<DealDetailsViewModel>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -145,23 +157,24 @@ namespace Services.Impl
             {
                 var deals = _dealRepository
                     .GetAll()
-                    .Where(x => x.Status == Domain.Enum.StatusDeal.Published)
+                    .Where(x => x.Status == StatusDeal.Published)
                     .Select(x => _mapper.Map<DealCardViewModel>(x))
                     .ToList();
+                
                 if (deals.Count != 0)
                 {
                     return new BaseResponse<List<DealCardViewModel>>()
                     {
                         Data = deals,
                         Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                     };
                 }
                 return new BaseResponse<List<DealCardViewModel>>()
                 {
                     Data = deals,
                     Description = "Нет заказов",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                 };
             }
             catch (Exception ex)
@@ -169,7 +182,7 @@ namespace Services.Impl
                 return new BaseResponse<List<DealCardViewModel>>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -185,13 +198,13 @@ namespace Services.Impl
 
                 return new BaseResponse<List<Deal>>() {
                     Data = deals,
-                    StatusCode = Domain.Enum.StatusCode.Ok
+                    StatusCode =  StatusCode.Ok
                 };
             }
             catch (Exception ex)
             {
                 return new BaseResponse<List<Deal>>() {
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                     Description = ex.Message
                 };
             }
@@ -209,14 +222,14 @@ namespace Services.Impl
             //         {
             //             Data = deals,
             //             Description = "Ok",
-            //             StatusCode = Domain.Enum.StatusCode.Ok,
+            //             StatusCode =  StatusCode.Ok,
             //         };
             //     }
             //     return new BaseResponse<List<Deal>>()
             //     {
             //         Data = deals,
             //         Description = $"Нет заказов с категорией с id={id}",
-            //         StatusCode = Domain.Enum.StatusCode.NotFound,
+            //         StatusCode =  StatusCode.NotFound,
             //     };
             // }
             // catch (Exception ex)
@@ -224,7 +237,7 @@ namespace Services.Impl
             //     return new BaseResponse<List<Deal>>()
             //     {
             //         Description = ex.Message,
-            //         StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+            //         StatusCode =  StatusCode.InternalServiseError,
             //     };
             // }
         }
@@ -240,14 +253,14 @@ namespace Services.Impl
                     {
                         Data = deals,
                         Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                     };
                 }
                 return new BaseResponse<List<Deal>>()
                 {
                     Data = deals,
                     Description = $"Нет заказов с id пользователя = {id}",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                 };
             }
             catch (Exception ex)
@@ -255,7 +268,7 @@ namespace Services.Impl
                 return new BaseResponse<List<Deal>>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -267,7 +280,7 @@ namespace Services.Impl
                 var deal = await _dealRepository
                     .GetAll()
                     .FirstOrDefaultAsync(
-                        x => x.Id == model.Id && x.Status == Domain.Enum.StatusDeal.Published
+                        x => x.Id == model.Id && x.Status ==  StatusDeal.Published
                     );
                 if (deal != null)
                 {
@@ -284,12 +297,12 @@ namespace Services.Impl
                     {
                         Data = deal,
                         Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                     };
                 }
                 return new BaseResponse<Deal>()
                 {
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                     Description = $"нет заказа с id = {model.Id}"
                 };
             }
@@ -298,7 +311,7 @@ namespace Services.Impl
                 return new BaseResponse<Deal>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -314,7 +327,7 @@ namespace Services.Impl
                     return new BaseResponse<bool>() 
                     {
                         Description = $"Нет заказа с id = {model.DealId}",
-                        StatusCode = Domain.Enum.StatusCode.NotFound
+                        StatusCode =  StatusCode.NotFound
                     };
                 }
 
@@ -329,7 +342,7 @@ namespace Services.Impl
                 return new BaseResponse<bool>() 
                 {
                     Data = true,
-                    StatusCode = Domain.Enum.StatusCode.Ok,
+                    StatusCode =  StatusCode.Ok,
                     Description = "Ok"
                 };
             }
@@ -338,7 +351,54 @@ namespace Services.Impl
                 return new BaseResponse<bool>() 
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError
+                    StatusCode =  StatusCode.InternalServiseError
+                };
+            }
+        }
+
+        public async Task<BaseResponse<DealCardResponse>> GetAll(int page, int limit, int userId)
+        {
+            try
+            {
+                List<Proposal> proposals = _proposalRepository
+                    .GetAll()
+                    .Where(x => x.UserId == userId)
+                    .ToList();
+                List<DealCardViewModel> deals = _dealRepository
+                    .GetAll()
+                    .Where(x => x.Status == StatusDeal.Published)
+                    .OrderByDescending(x => x.DatePublication)
+                    .Skip((page - 1) * limit)
+                    .Take(limit)
+                    .Select(x => _mapper.Map<DealCardViewModel>(x))
+                    .ToList();
+
+                deals.ForEach(deal =>
+                {
+                    bool alreadyResponded = proposals.Any(y => y.DealId == deal.Id);
+                    deal.AlreadyResponded = alreadyResponded;
+                });
+
+                DealCardResponse response = new DealCardResponse() 
+                {
+                    Deals = deals,
+                    Total = _dealRepository.GetAll().Count() 
+                };
+
+                return new BaseResponse<DealCardResponse>()
+                {
+                    Data = response,
+                    StatusCode = StatusCode.Ok,
+                    Description = "Ok"
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new BaseResponse<DealCardResponse>() 
+                {
+                    StatusCode =  StatusCode.InternalServiseError,
+                    Description = ex.Message
                 };
             }
         }

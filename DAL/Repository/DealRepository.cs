@@ -35,9 +35,11 @@ namespace DAL.Repository
         }
         public async Task<Deal> GetWithCreator(int id)
         {
-            return _dbContext.Deals.Include(x => x.CreatorUser).FirstOrDefault(x => x.Id == id);
+            return _dbContext.Deals
+                .Include(x => x.CreatorUser)
+                .ThenInclude(u => u.Categories)
+                .FirstOrDefault(x => x.Id == id);
         }
-
 
         public IQueryable<Deal> GetAll()
         {

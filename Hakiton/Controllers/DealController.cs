@@ -34,18 +34,18 @@ namespace Hakiton.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Deals([FromQuery] int limit, int page)
+        public async Task<IActionResult> Deals([FromQuery] int limit, int page, int userId)
         {
-            var response = await _dealService.GetAll();
+            var response = await _dealService.GetAll(page, limit, userId);
 
             if (
                 response.StatusCode == Domain.Enum.StatusCode.Ok
                 || response.StatusCode == Domain.Enum.StatusCode.NotFound
             )
             {
-                Response.Headers.Append("x-total-count", response.Data.Count.ToString());
+                Response.Headers.Append("x-total-count", response.Data.Total.ToString());
 
-                return Json(response.Data.Skip((page - 1) * limit).Take(limit));
+                return Json(response.Data.Deals);
             }
             return BadRequest(response.Description);
         }
@@ -134,11 +134,11 @@ namespace Hakiton.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, int userId)
         {
             if (ModelState.IsValid)
             {
-                var response = await _dealService.Get(id);
+                var response = await _dealService.Get(id, userId);
                 if (
                     response.StatusCode == Domain.Enum.StatusCode.Ok
                     || response.StatusCode == Domain.Enum.StatusCode.NotFound
