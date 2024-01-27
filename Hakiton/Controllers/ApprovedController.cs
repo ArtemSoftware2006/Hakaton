@@ -54,6 +54,8 @@ namespace Hakiton.Controllers
                     || response.StatusCode == Domain.Enum.StatusCode.NotFound
                 )
                 {
+                    HttpContext.Response.Headers.Add("x-total-count", response.Data.Count.ToString());
+
                     return Json(response.Data);
                 }
                 return StatusCode(400, response.Description);
@@ -74,6 +76,8 @@ namespace Hakiton.Controllers
                     || response.StatusCode == Domain.Enum.StatusCode.NotFound
                 )
                 {
+                    HttpContext.Response.Headers.Add("x-total-count", response.Data.Count.ToString());
+
                     return Json(response.Data);
                 }
                 return StatusCode(400, response.Description);

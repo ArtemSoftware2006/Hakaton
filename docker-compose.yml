@@ -4,7 +4,7 @@ services:
   app:
     depends_on:
        - db
-    image: artem06/code-masters:1.0
+    image: artem06/code-masters:1.1
     ports:
       - "5202:8080"
     environment:

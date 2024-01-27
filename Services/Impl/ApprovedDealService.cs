@@ -1,5 +1,6 @@
 ﻿using DAL.Interfaces;
 using Domain.Entity;
+using Domain.Enum;
 using Domain.Response;
 using Services.Interfaces;
 
@@ -24,10 +25,10 @@ namespace Services.Impl
                 {
                     var proposal = await _proposalRepository.Get(ProposalId);
 
-                    if (proposal != null &&  deal.Status == Domain.Enum.StatusDeal.Published)
+                    if (proposal != null &&  deal.Status ==  StatusDeal.Published)
                     {
-                        deal.Status = Domain.Enum.StatusDeal.InProcess;
-                        proposal.Status = Domain.Enum.StatusDeal.InProcess;
+                        deal.Status =  StatusDeal.InProcess;
+                        proposal.Status =  StatusDeal.InProcess;
 
                         await _dealRepository.Update(deal);
                         await _proposalRepository.Update(proposal);
@@ -36,19 +37,19 @@ namespace Services.Impl
                         {
                             Data = true,
                             Description = "Ok",
-                            StatusCode = Domain.Enum.StatusCode.Ok,
+                            StatusCode =  StatusCode.Ok,
                         };
                     }                    
                     return new BaseResponse<bool>()
                     {
                         Description = $"нет предложения с id = {ProposalId} или заказ уже выполянется другим заказчиком.",
-                        StatusCode = Domain.Enum.StatusCode.NotFound
+                        StatusCode =  StatusCode.NotFound
                     };
                 }
                 return new BaseResponse<bool>()
                 {
                     Description = $"нет заказа с id = {DealId}",
-                    StatusCode = Domain.Enum.StatusCode.NotFound
+                    StatusCode =  StatusCode.NotFound
                 };
             }
             catch (Exception ex)
@@ -56,7 +57,7 @@ namespace Services.Impl
                 return new BaseResponse<bool>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -64,21 +65,24 @@ namespace Services.Impl
         {
             try
             {
-                var deals = _dealRepository.GetAll().Where(x => x.CreatorUserId == EmployerId
-                    && x.Status == Domain.Enum.StatusDeal.InProcess).ToList();
+                var deals = _dealRepository
+                    .GetAll()
+                    .Where(x => x.CreatorUserId == EmployerId
+                        && x.Status ==  StatusDeal.InProcess)
+                    .ToList();
 
                 if (deals.Count != 0)
                 {
                     return new BaseResponse<List<Deal>>()
                     {
                         Data = deals,
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                         Description = "Ok",
                     };
                 }
                 return new BaseResponse<List<Deal>>()
                 {
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                     Description = "нет утверждённых заказов",
                 };
             }
@@ -87,7 +91,7 @@ namespace Services.Impl
                 return new BaseResponse<List<Deal>>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }
@@ -95,21 +99,24 @@ namespace Services.Impl
         {
             try
             {
-                var proposals = _proposalRepository.GetAll().Where(x => x.UserId == executorId
-                    && x.Status == Domain.Enum.StatusDeal.InProcess).ToList();
+                var proposals = _proposalRepository
+                    .GetAll()
+                    .Where(x => x.UserId == executorId
+                        && x.Status == StatusDeal.InProcess)
+                    .ToList();
 
                 if (proposals.Count != 0)
                 {
                     return new BaseResponse<List<Proposal>>()
                     {
                         Data = proposals,
-                        StatusCode = Domain.Enum.StatusCode.Ok,
+                        StatusCode =  StatusCode.Ok,
                         Description = "Ok",
                     };
                 }
                 return new BaseResponse<List<Proposal>>()
                 {
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    StatusCode =  StatusCode.NotFound,
                     Description = "нет утверждённых предложений на заказ",
                 };
             }
@@ -118,7 +125,7 @@ namespace Services.Impl
                 return new BaseResponse<List<Proposal>>()
                 {
                     Description = ex.Message,
-                    StatusCode = Domain.Enum.StatusCode.InternalServiseError,
+                    StatusCode =  StatusCode.InternalServiseError,
                 };
             }
         }

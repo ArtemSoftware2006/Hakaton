@@ -26,5 +26,7 @@ namespace Domain.Entity
         [JsonIgnore]
         public List<Deal> CreatedDeals { get; set; }
         public List<Deal> AcceptedDeals { get; set; }
+        public List<Contract> ContractsAsEmployer { get; set; }
+        public List<Contract> ContractsAsExecutor { get; set; }
     }
 }

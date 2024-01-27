@@ -6,7 +6,7 @@ namespace Domain.Entity
     public class Proposal
     {
         public int Id { get; set; }
-        public string Descripton { get; set; }
+        public string Description { get; set; }
         public int Price { get; set; }
         public DateTime DatePublish { get; set; }
         public StatusDeal Status { get; set; }

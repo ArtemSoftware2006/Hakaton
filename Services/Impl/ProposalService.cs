@@ -37,7 +37,7 @@ namespace Services.Impl
                     //TODO Добавить маппер
                     proposal = new Proposal()
                     {
-                        Descripton = model.Description,
+                        Description = model.Description,
                         Price = model.Price,
                         UserId = model.UserId,
                         DealId = model.DealId,
@@ -168,21 +168,14 @@ namespace Services.Impl
             try
             {
                 var proposals = _proposalRepository.GetAll().Where(x => x.DealId == id).ToList();
-                if (proposals.Count != 0)
-                {
-                    return new BaseResponse<List<Proposal>>()
-                    {
-                        Data = proposals,
-                        Description = "Ok",
-                        StatusCode = Domain.Enum.StatusCode.Ok
-                    };
-                }
-                return new BaseResponse<List<Proposal>>
+                
+                return new BaseResponse<List<Proposal>>()
                 {
                     Data = proposals,
-                    Description = $"Нет Заявок выполнить запрос с id = {id}",
-                    StatusCode = Domain.Enum.StatusCode.NotFound,
+                    Description = "Ok",
+                    StatusCode = Domain.Enum.StatusCode.Ok
                 };
+                
             }
             catch (Exception ex)
             {
@@ -202,7 +195,7 @@ namespace Services.Impl
                 if (proposal != null)
                 {
                     proposal.Price = model.Price ?? proposal.Price;
-                    proposal.Descripton = model.Descripton ?? model.Descripton;
+                    proposal.Description = model.Descripton ?? model.Descripton;
 
                     await _proposalRepository.Update(proposal);
 
