@@ -106,7 +106,7 @@ namespace Services.Impl
         {
             try
             {
-                var proposal = await _proposalRepository.Get(id);
+                var proposal = await _proposalRepository.GetWithUser(id);
                 if (proposal != null)
                 {
                     return new BaseResponse<Proposal>()

@@ -4,7 +4,7 @@ services:
   app:
     depends_on:
        - db
-    image: artem06/code-masters:1.1
+    image: artem06/code-masters:1.2
     ports:
       - "5202:8080"
     environment:
@@ -14,7 +14,7 @@ services:
       Jwt__secret: secret060606gfghdgdsfgfdgergsdfdgrrer
       Jwt__Issuer: http://localhost:5202
       Jwt__Audience: http://localhost:5202
-      Jwt__Lifetime: 240
+      Jwt__Lifetime: 43200
   db:
     image: postgres:latest
     ports:

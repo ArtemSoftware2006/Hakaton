@@ -46,5 +46,12 @@ namespace DAL.Repository
 
             return entity;
         }
+
+        public async Task<Proposal> GetWithUser(int id)
+        {
+            return await _dbContext.Proposals
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

@@ -16,6 +16,22 @@ namespace Hakiton.Controllers
             _proposalService = proposalService;
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id) {
+            var response = await _proposalService.Get(id);
+
+            if (response.StatusCode == Domain.Enum.StatusCode.Ok)
+            {
+                return Ok(response.Data);
+            }
+            else if (response.StatusCode == Domain.Enum.StatusCode.NotFound){
+                return BadRequest(response.Description);   
+            }
+            else {
+                return StatusCode(500, response.Description);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllPoroposals()
         {
@@ -95,23 +111,6 @@ namespace Hakiton.Controllers
                 return Json(response.Data);
             }
             return BadRequest(response.Description);
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Get(int id)
-        {
-            if (ModelState.IsValid)
-            {
-                var response = await _proposalService.Get(id);
-
-                if (response.StatusCode == Domain.Enum.StatusCode.Ok)
-                {
-                    return Json(response.Data);
-                }
-                return StatusCode(400, response.Description);
-            }
-            return BadRequest("Модель не валидна");
         }
 
         [HttpPatch]
