@@ -16,6 +16,8 @@ namespace Services.Interfaces
         Task<BaseResponse<List<DealCardViewModel>>> GetAll();
         Task<BaseResponse<DealCardResponse>> GetAll(int page, int limit, int userId);        
         Task<BaseResponse<List<Deal>>> GetByCetegory(int id);
+        Task<BaseResponse<bool>> CloseDeal(int id);
         Task<BaseResponse<bool>> AddCategories(DealAddCategoriesViewModel model);
     }
+
 }

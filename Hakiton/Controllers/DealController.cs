@@ -168,6 +168,24 @@ namespace Hakiton.Controllers
 
         [HttpPost]
         [Authorize]
+        public async Task<IActionResult> Close(int dealId)
+        {
+            var resonse = await _dealService.CloseDeal(dealId);
+
+            if (resonse.StatusCode == Domain.Enum.StatusCode.Ok)
+            {
+                return Ok(resonse.Data);
+            }
+            else if (resonse.StatusCode == Domain.Enum.StatusCode.NotFound) {
+                return BadRequest(resonse.Description);
+            }
+            else {
+                return StatusCode(500, resonse.Description);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddCategories([FromBody]DealAddCategoriesViewModel model)
         {
             if (ModelState.IsValid)

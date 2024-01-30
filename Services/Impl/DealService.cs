@@ -402,5 +402,52 @@ namespace Services.Impl
                 };
             }
         }
+
+        public async Task<BaseResponse<bool>> CloseDeal(int id)
+        {
+            try
+            {
+                Deal deal = await _dealRepository.Get(id);
+
+                if (deal == null)
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        Description = "Нет заказа с id = " + id,
+                        StatusCode = StatusCode.NotFound
+                    };
+                }
+                else if (deal.Status != StatusDeal.InProcess)
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        Description = "Заказ не процессе выполнения. Заказ с id = " + id,
+                        StatusCode = StatusCode.NotFound
+                    };
+                }
+
+                deal.Status = StatusDeal.Closed;
+
+                Deal result = await _dealRepository.Update(deal);
+
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    Description = "Ok",
+                    StatusCode = StatusCode.Ok
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>() 
+                {
+                    Data = false,
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServiseError
+                };
+            }
+        }
     }
 }
