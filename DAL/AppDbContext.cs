@@ -51,16 +51,16 @@ namespace DAL
             modelBuilder
                 .Entity<Category>()
                 .HasData(
-                    new Category() { Id = 1, Name = "Разработка" },
-                    new Category() { Id = 2, Name = "Дизайн" },
-                    new Category() { Id = 3, Name = "Базы данных" },
-                    new Category() { Id = 4, Name = "Репетиторство" },
-                    new Category() { Id = 5, Name = "Литература" },
-                    new Category() { Id = 6, Name = "Музыка" },
-                    new Category() { Id = 7, Name = "Видео мантаж" },
-                    new Category() { Id = 8, Name = "Фото" },
+                    new Category() { Id = 1, Name = "Development" },
+                    new Category() { Id = 2, Name = "Design" },
+                    new Category() { Id = 3, Name = "Data bases" },
+                    new Category() { Id = 4, Name = "Tutoring" },
+                    new Category() { Id = 5, Name = "Literature" },
+                    new Category() { Id = 6, Name = "Music" },
+                    new Category() { Id = 7, Name = "Video editing" },
+                    new Category() { Id = 8, Name = "Photo" },
                     new Category() { Id = 9, Name = "3D" },
-                    new Category() { Id = 10, Name = "Переводы" }
+                    new Category() { Id = 10, Name = "Translations" }
                 );
         }
     }
